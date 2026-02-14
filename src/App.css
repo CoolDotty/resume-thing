@@ -1,0 +1,36 @@
+#root {
+  width: 100%;
+}
+
+.app {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, 2vw + 1rem, 2.5rem);
+}
+
+button {
+  border: 1px solid #2b2b2b;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.1rem;
+  font: inherit;
+  background: #ffffff;
+  color: #111111;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #f3f3f3;
+}
+
+button:focus-visible {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+}

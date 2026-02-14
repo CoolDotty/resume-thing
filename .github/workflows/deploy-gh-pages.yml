@@ -1,0 +1,79 @@
+name: Build and Deploy to gh-pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone source branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git clone \
+            --depth 1 \
+            --branch "${GITHUB_REF_NAME}" \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            source
+
+      - name: Use Node.js
+        run: |
+          set -euo pipefail
+          curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+
+      - name: Install and build
+        run: |
+          set -euo pipefail
+          cd source
+          npm ci
+          npm run build
+
+      - name: Publish to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          cd source
+          DEPLOY_DIR="$(mktemp -d)"
+
+          if git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+            git clone \
+              --depth 1 \
+              --branch gh-pages \
+              "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+              "${DEPLOY_DIR}"
+          else
+            git init "${DEPLOY_DIR}"
+            cd "${DEPLOY_DIR}"
+            git checkout --orphan gh-pages
+            git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            cd - > /dev/null
+          fi
+
+          rm -rf "${DEPLOY_DIR:?}"/*
+          cp -a dist/. "${DEPLOY_DIR}/"
+          touch "${DEPLOY_DIR}/.nojekyll"
+
+          cd "${DEPLOY_DIR}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to deploy."
+            exit 0
+          fi
+
+          git commit -m "Deploy ${GITHUB_SHA}"
+          git push origin gh-pages
