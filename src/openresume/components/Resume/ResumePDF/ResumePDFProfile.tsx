@@ -129,17 +129,20 @@ export const ResumePDFProfile = ({
                 marginTop: spacing["1"]
               }}
             >
-              {contactRow.map(({ key, value, iconType, src }) => {
+              {contactRow.map((contact) => {
+                const { key, value, iconType, src } = contact;
+                const flexWeight = Math.max(1, Math.min(value.length, 40));
                 const content = (
                   <View
                     style={{
                       ...styles.flexRow,
                       alignItems: "center",
-                      gap: spacing["1"]
+                      gap: spacing["1"],
+                      minWidth: 0
                     }}
                   >
                     <ResumePDFIcon type={iconType} isPDF={isPDF} />
-                    <ResumePDFText>{value}</ResumePDFText>
+                    <ResumePDFText style={{ flexShrink: 1 }}>{value}</ResumePDFText>
                   </View>
                 );
 
@@ -148,7 +151,10 @@ export const ResumePDFProfile = ({
                     key={key}
                     style={{
                       ...styles.flexRow,
-                      width: "25%",
+                      flexGrow: flexWeight,
+                      flexShrink: 1,
+                      flexBasis: 0,
+                      minWidth: 0,
                       justifyContent: "center",
                       marginTop: spacing["2"]
                     }}
