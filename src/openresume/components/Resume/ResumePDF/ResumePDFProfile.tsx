@@ -90,6 +90,17 @@ export const ResumePDFProfile = ({
     });
   });
 
+  const contactRowChunks = contactRows.reduce<
+    Array<Array<{ key: string; value: string; iconType: IconType; src: string }>>
+  >((rows, contact, idx) => {
+    const rowIndex = Math.floor(idx / 4);
+    if (!rows[rowIndex]) {
+      rows[rowIndex] = [];
+    }
+    rows[rowIndex].push(contact);
+    return rows;
+  }, []);
+
   return (
     <ResumePDFSection style={{ marginTop: spacing["4"], gap: spacing["1"] }}>
       <ResumePDFText
@@ -103,51 +114,56 @@ export const ResumePDFProfile = ({
       {contactRows.length > 0 && (
         <View
           style={{
-            ...styles.flexRow,
-            flexWrap: "wrap",
-            justifyContent: "space-between",
+            ...styles.flexCol,
             width: "100%",
             marginTop: spacing["0"]
           }}
         >
-          {contactRows.map(({ key, value, iconType, src }, idx) => {
-            const columnIndex = idx % 4
-            const columnJustifyContent =
-              columnIndex === 0 ? "flex-start" : columnIndex === 3 ? "flex-end" : "center"
+          {contactRowChunks.map((contactRow, rowIdx) => (
+            <View
+              key={`contact-row-${rowIdx}`}
+              style={{
+                ...styles.flexRow,
+                width: "100%",
+                marginTop: spacing["1"]
+              }}
+            >
+              {contactRow.map(({ key, value, iconType, src }) => {
+                const content = (
+                  <View
+                    style={{
+                      ...styles.flexRow,
+                      alignItems: "center",
+                      gap: spacing["1"]
+                    }}
+                  >
+                    <ResumePDFIcon type={iconType} isPDF={isPDF} />
+                    <ResumePDFText>{value}</ResumePDFText>
+                  </View>
+                );
 
-            const content = (
-              <View
-                style={{
-                  ...styles.flexRow,
-                  alignItems: "center",
-                  gap: spacing["1"]
-                }}
-              >
-                <ResumePDFIcon type={iconType} isPDF={isPDF} />
-                <ResumePDFText>{value}</ResumePDFText>
-              </View>
-            );
-
-            return (
-              <View
-                key={key}
-                style={{
-                  ...styles.flexRow,
-                  width: "25%",
-                  justifyContent: columnJustifyContent,
-                  marginTop: spacing["2"]
-                }}
-              >
-                {src ? (
-                  <ResumePDFLink src={src} isPDF={isPDF}>
-                    {content}
-                  </ResumePDFLink>
-                ) : (
-                  content
-                )}
-              </View>
-            );
-          })}
+                return (
+                  <View
+                    key={key}
+                    style={{
+                      ...styles.flexRow,
+                      width: "25%",
+                      justifyContent: "center",
+                      marginTop: spacing["2"]
+                    }}
+                  >
+                    {src ? (
+                      <ResumePDFLink src={src} isPDF={isPDF}>
+                        {content}
+                      </ResumePDFLink>
+                    ) : (
+                      content
+                    )}
+                  </View>
+                );
+              })}
+            </View>
+          ))}
         </View>
       )}
     </ResumePDFSection>
