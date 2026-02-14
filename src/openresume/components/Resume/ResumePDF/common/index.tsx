@@ -96,7 +96,7 @@ export const ResumePDFBulletList = ({
               }}
               bold={true}
             >
-              {"•"}
+              {"*"}
             </ResumePDFText>
           )}
           {/* A breaking change was introduced causing text layout to be wider than node's width

@@ -1,59 +1,46 @@
 # resume-thing
 
-Minimal Vite app that converts OpenResume JSON state into a downloadable PDF.
+Minimal Vite app that converts JSON Resume data into a downloadable PDF.
 
 ## Input JSON shape
 
-Paste a full app-state object in the textarea:
+Paste a JSON Resume object in the textarea (v1.0.0 structure):
 
 ```json
 {
-  "resume": {
-    "profile": {
-      "name": "Jane Doe",
-      "email": "jane@example.com",
-      "phone": "555-555-5555",
-      "url": "https://example.com",
-      "summary": "Short summary",
-      "location": "New York, NY"
+  "basics": {
+    "name": "Jane Doe",
+    "label": "Software Engineer",
+    "email": "jane@example.com",
+    "phone": "555-555-5555",
+    "url": "https://example.com",
+    "summary": "Short summary",
+    "location": {
+      "city": "New York",
+      "region": "NY",
+      "countryCode": "US"
     },
-    "workExperiences": [],
-    "educations": [],
-    "projects": [],
-    "skills": {
-      "featuredSkills": [],
-      "descriptions": []
-    },
-    "custom": {
-      "descriptions": []
-    }
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "janedoe",
+        "url": "https://linkedin.com/in/janedoe"
+      }
+    ]
   },
-  "settings": {
-    "themeColor": "#38bdf8",
-    "fontFamily": "Roboto",
-    "fontSize": "11",
-    "documentSize": "Letter",
-    "formToShow": {
-      "workExperiences": true,
-      "educations": true,
-      "projects": true,
-      "skills": true,
-      "custom": false
-    },
-    "formToHeading": {
-      "workExperiences": "WORK EXPERIENCE",
-      "educations": "EDUCATION",
-      "projects": "PROJECT",
-      "skills": "SKILLS",
-      "custom": "CUSTOM SECTION"
-    },
-    "formsOrder": ["workExperiences", "educations", "projects", "skills", "custom"],
-    "showBulletPoints": {
-      "educations": true,
-      "projects": true,
-      "skills": true,
-      "custom": true
-    }
+  "work": [],
+  "volunteer": [],
+  "education": [],
+  "awards": [],
+  "certificates": [],
+  "publications": [],
+  "skills": [],
+  "languages": [],
+  "interests": [],
+  "references": [],
+  "projects": [],
+  "meta": {
+    "version": "v1.0.0"
   }
 }
 ```

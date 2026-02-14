@@ -1,65 +1,158 @@
 import type { Settings } from "lib/redux/settingsSlice";
 import type {
-  FeaturedSkill,
-  Resume,
-  ResumeEducation,
-  ResumeProfile,
-  ResumeProject,
-  ResumeSkills,
-  ResumeWorkExperience
+  JsonResumeAward,
+  JsonResumeBasics,
+  JsonResumeCertificate,
+  JsonResumeEducation,
+  JsonResumeInterest,
+  JsonResumeLanguage,
+  JsonResumeLocation,
+  JsonResumeMeta,
+  JsonResumeProfile,
+  JsonResumeProject,
+  JsonResumePublication,
+  JsonResumeReference,
+  JsonResumeSkill,
+  JsonResumeVolunteer,
+  JsonResumeWork,
+  Resume
 } from "lib/redux/types";
 
-export const initialProfile: ResumeProfile = {
-  name: "",
-  summary: "",
-  email: "",
-  phone: "",
-  location: "",
+export const initialLocation: JsonResumeLocation = {
+  address: "",
+  postalCode: "",
+  city: "",
+  countryCode: "",
+  region: ""
+};
+
+export const initialProfile: JsonResumeProfile = {
+  network: "",
+  username: "",
   url: ""
 };
 
-export const initialWorkExperience: ResumeWorkExperience = {
-  company: "",
-  jobTitle: "",
+export const initialBasics: JsonResumeBasics = {
+  name: "",
+  label: "",
+  image: "",
+  email: "",
+  phone: "",
+  url: "",
+  summary: "",
+  location: initialLocation,
+  profiles: []
+};
+
+export const initialWork: JsonResumeWork = {
+  name: "",
+  location: "",
+  description: "",
+  position: "",
+  url: "",
+  startDate: "",
+  endDate: "",
+  summary: "",
+  highlights: []
+};
+
+export const initialVolunteer: JsonResumeVolunteer = {
+  organization: "",
+  position: "",
+  url: "",
+  startDate: "",
+  endDate: "",
+  summary: "",
+  highlights: []
+};
+
+export const initialEducation: JsonResumeEducation = {
+  institution: "",
+  url: "",
+  area: "",
+  studyType: "",
+  startDate: "",
+  endDate: "",
+  score: "",
+  courses: []
+};
+
+export const initialAward: JsonResumeAward = {
+  title: "",
   date: "",
-  descriptions: []
+  awarder: "",
+  summary: ""
 };
 
-export const initialEducation: ResumeEducation = {
-  school: "",
-  degree: "",
-  gpa: "",
+export const initialCertificate: JsonResumeCertificate = {
+  name: "",
   date: "",
-  descriptions: []
+  issuer: "",
+  url: ""
 };
 
-export const initialProject: ResumeProject = {
-  project: "",
-  date: "",
-  descriptions: []
+export const initialPublication: JsonResumePublication = {
+  name: "",
+  publisher: "",
+  releaseDate: "",
+  url: "",
+  summary: ""
 };
 
-export const initialFeaturedSkill: FeaturedSkill = { skill: "", rating: 4 };
-export const initialFeaturedSkills: FeaturedSkill[] = Array(6)
-  .fill(null)
-  .map(() => ({ ...initialFeaturedSkill }));
-
-export const initialSkills: ResumeSkills = {
-  featuredSkills: initialFeaturedSkills,
-  descriptions: []
+export const initialSkill: JsonResumeSkill = {
+  name: "",
+  level: "",
+  keywords: []
 };
 
-export const initialCustom = {
-  descriptions: []
+export const initialLanguage: JsonResumeLanguage = {
+  language: "",
+  fluency: ""
+};
+
+export const initialInterest: JsonResumeInterest = {
+  name: "",
+  keywords: []
+};
+
+export const initialReference: JsonResumeReference = {
+  name: "",
+  reference: ""
+};
+
+export const initialProject: JsonResumeProject = {
+  name: "",
+  description: "",
+  highlights: [],
+  keywords: [],
+  startDate: "",
+  endDate: "",
+  url: "",
+  roles: [],
+  entity: "",
+  type: ""
+};
+
+export const initialMeta: JsonResumeMeta = {
+  canonical: "",
+  version: "v1.0.0",
+  lastModified: ""
 };
 
 export const initialResumeState: Resume = {
-  profile: initialProfile,
-  workExperiences: [initialWorkExperience],
-  educations: [initialEducation],
-  projects: [initialProject],
-  skills: initialSkills,
-  custom: initialCustom
+  basics: initialBasics,
+  work: [],
+  volunteer: [],
+  education: [],
+  awards: [],
+  certificates: [],
+  publications: [],
+  skills: [],
+  languages: [],
+  interests: [],
+  references: [],
+  projects: [],
+  meta: initialMeta
 };
 
 export const initialAppState = {
@@ -70,25 +163,51 @@ export const initialAppState = {
     fontSize: "11",
     documentSize: "Letter",
     formToShow: {
-      workExperiences: true,
-      educations: true,
+      work: true,
+      volunteer: true,
+      education: true,
       projects: true,
+      awards: true,
+      certificates: true,
+      publications: true,
       skills: true,
-      custom: false
+      languages: true,
+      interests: true,
+      references: true
     },
     formToHeading: {
-      workExperiences: "WORK EXPERIENCE",
-      educations: "EDUCATION",
-      projects: "PROJECT",
+      work: "WORK EXPERIENCE",
+      volunteer: "VOLUNTEER",
+      education: "EDUCATION",
+      projects: "PROJECTS",
+      awards: "AWARDS",
+      certificates: "CERTIFICATES",
+      publications: "PUBLICATIONS",
       skills: "SKILLS",
-      custom: "CUSTOM SECTION"
+      languages: "LANGUAGES",
+      interests: "INTERESTS",
+      references: "REFERENCES"
     },
-    formsOrder: ["workExperiences", "educations", "projects", "skills", "custom"],
+    formsOrder: [
+      "work",
+      "volunteer",
+      "education",
+      "projects",
+      "awards",
+      "certificates",
+      "publications",
+      "skills",
+      "languages",
+      "interests",
+      "references"
+    ],
     showBulletPoints: {
-      educations: true,
+      work: true,
+      volunteer: true,
+      education: true,
       projects: true,
       skills: true,
-      custom: true
+      interests: true
     }
   } satisfies Settings
 };

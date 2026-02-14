@@ -4,25 +4,39 @@ export interface Settings {
   fontSize: string;
   documentSize: string;
   formToShow: {
-    workExperiences: boolean;
-    educations: boolean;
+    work: boolean;
+    volunteer: boolean;
+    education: boolean;
     projects: boolean;
+    awards: boolean;
+    certificates: boolean;
+    publications: boolean;
     skills: boolean;
-    custom: boolean;
+    languages: boolean;
+    interests: boolean;
+    references: boolean;
   };
   formToHeading: {
-    workExperiences: string;
-    educations: string;
+    work: string;
+    volunteer: string;
+    education: string;
     projects: string;
+    awards: string;
+    certificates: string;
+    publications: string;
     skills: string;
-    custom: string;
+    languages: string;
+    interests: string;
+    references: string;
   };
   formsOrder: ShowForm[];
   showBulletPoints: {
-    educations: boolean;
+    work: boolean;
+    volunteer: boolean;
+    education: boolean;
     projects: boolean;
     skills: boolean;
-    custom: boolean;
+    interests: boolean;
   };
 }
 
@@ -39,24 +53,50 @@ export const initialSettings: Settings = {
   fontSize: DEFAULT_FONT_SIZE,
   documentSize: "Letter",
   formToShow: {
-    workExperiences: true,
-    educations: true,
+    work: true,
+    volunteer: true,
+    education: true,
     projects: true,
+    awards: true,
+    certificates: true,
+    publications: true,
     skills: true,
-    custom: false
+    languages: true,
+    interests: true,
+    references: true
   },
   formToHeading: {
-    workExperiences: "WORK EXPERIENCE",
-    educations: "EDUCATION",
-    projects: "PROJECT",
+    work: "WORK EXPERIENCE",
+    volunteer: "VOLUNTEER",
+    education: "EDUCATION",
+    projects: "PROJECTS",
+    awards: "AWARDS",
+    certificates: "CERTIFICATES",
+    publications: "PUBLICATIONS",
     skills: "SKILLS",
-    custom: "CUSTOM SECTION"
+    languages: "LANGUAGES",
+    interests: "INTERESTS",
+    references: "REFERENCES"
   },
-  formsOrder: ["workExperiences", "educations", "projects", "skills", "custom"],
+  formsOrder: [
+    "work",
+    "volunteer",
+    "education",
+    "projects",
+    "awards",
+    "certificates",
+    "publications",
+    "skills",
+    "languages",
+    "interests",
+    "references"
+  ],
   showBulletPoints: {
-    educations: true,
+    work: true,
+    volunteer: true,
+    education: true,
     projects: true,
     skills: true,
-    custom: true
+    interests: true
   }
 };

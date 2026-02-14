@@ -5,25 +5,29 @@ import {
   useRegisterReactPDFFont,
   useRegisterReactPDFHyphenationCallback
 } from "components/fonts/hooks";
-import { initialAppState } from "lib/redux/resumeDefaults";
-import { initialSettings, type Settings } from "lib/redux/settingsSlice";
+import { initialResumeState } from "lib/redux/resumeDefaults";
+import { initialSettings } from "lib/redux/settingsSlice";
 import type {
-  FeaturedSkill,
-  Resume,
-  ResumeEducation,
-  ResumeProfile,
-  ResumeProject,
-  ResumeSkills,
-  ResumeWorkExperience
+  JsonResumeAward,
+  JsonResumeBasics,
+  JsonResumeCertificate,
+  JsonResumeEducation,
+  JsonResumeInterest,
+  JsonResumeLanguage,
+  JsonResumeLocation,
+  JsonResumeMeta,
+  JsonResumeProfile,
+  JsonResumeProject,
+  JsonResumePublication,
+  JsonResumeReference,
+  JsonResumeSkill,
+  JsonResumeVolunteer,
+  JsonResumeWork,
+  Resume
 } from "lib/redux/types";
 import "./App.css";
 
-interface NormalizedAppState {
-  resume: Resume;
-  settings: Settings;
-}
-
-const seedJson = JSON.stringify(initialAppState, null, 2);
+const seedJson = JSON.stringify(initialResumeState, null, 2);
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -40,173 +44,213 @@ const asStringArray = (value: unknown): string[] => {
   return value.filter((entry): entry is string => typeof entry === "string");
 };
 
-const normalizeProfile = (value: unknown): ResumeProfile => {
+const normalizeLocation = (value: unknown): JsonResumeLocation => {
+  const input = isRecord(value) ? value : {};
+  return {
+    address: asString(input.address),
+    postalCode: asString(input.postalCode),
+    city: asString(input.city),
+    countryCode: asString(input.countryCode),
+    region: asString(input.region)
+  };
+};
+
+const normalizeProfile = (value: unknown): JsonResumeProfile => {
+  const input = isRecord(value) ? value : {};
+  return {
+    network: asString(input.network),
+    username: asString(input.username),
+    url: asString(input.url)
+  };
+};
+
+const normalizeBasics = (value: unknown): JsonResumeBasics => {
   const input = isRecord(value) ? value : {};
   return {
     name: asString(input.name),
+    label: asString(input.label),
+    image: asString(input.image),
     email: asString(input.email),
     phone: asString(input.phone),
     url: asString(input.url),
     summary: asString(input.summary),
-    location: asString(input.location)
+    location: normalizeLocation(input.location),
+    profiles: Array.isArray(input.profiles)
+      ? input.profiles.map(normalizeProfile)
+      : []
   };
 };
 
-const normalizeWorkExperience = (value: unknown): ResumeWorkExperience => {
+const normalizeWork = (value: unknown): JsonResumeWork => {
   const input = isRecord(value) ? value : {};
   return {
-    company: asString(input.company),
-    jobTitle: asString(input.jobTitle),
+    name: asString(input.name),
+    location: asString(input.location),
+    description: asString(input.description),
+    position: asString(input.position),
+    url: asString(input.url),
+    startDate: asString(input.startDate),
+    endDate: asString(input.endDate),
+    summary: asString(input.summary),
+    highlights: asStringArray(input.highlights)
+  };
+};
+
+const normalizeVolunteer = (value: unknown): JsonResumeVolunteer => {
+  const input = isRecord(value) ? value : {};
+  return {
+    organization: asString(input.organization),
+    position: asString(input.position),
+    url: asString(input.url),
+    startDate: asString(input.startDate),
+    endDate: asString(input.endDate),
+    summary: asString(input.summary),
+    highlights: asStringArray(input.highlights)
+  };
+};
+
+const normalizeEducation = (value: unknown): JsonResumeEducation => {
+  const input = isRecord(value) ? value : {};
+  return {
+    institution: asString(input.institution),
+    url: asString(input.url),
+    area: asString(input.area),
+    studyType: asString(input.studyType),
+    startDate: asString(input.startDate),
+    endDate: asString(input.endDate),
+    score: asString(input.score),
+    courses: asStringArray(input.courses)
+  };
+};
+
+const normalizeAward = (value: unknown): JsonResumeAward => {
+  const input = isRecord(value) ? value : {};
+  return {
+    title: asString(input.title),
     date: asString(input.date),
-    descriptions: asStringArray(input.descriptions)
+    awarder: asString(input.awarder),
+    summary: asString(input.summary)
   };
 };
 
-const normalizeEducation = (value: unknown): ResumeEducation => {
+const normalizeCertificate = (value: unknown): JsonResumeCertificate => {
   const input = isRecord(value) ? value : {};
   return {
-    school: asString(input.school),
-    degree: asString(input.degree),
+    name: asString(input.name),
     date: asString(input.date),
-    gpa: asString(input.gpa),
-    descriptions: asStringArray(input.descriptions)
+    issuer: asString(input.issuer),
+    url: asString(input.url)
   };
 };
 
-const normalizeProject = (value: unknown): ResumeProject => {
+const normalizePublication = (value: unknown): JsonResumePublication => {
   const input = isRecord(value) ? value : {};
   return {
-    project: asString(input.project),
-    date: asString(input.date),
-    descriptions: asStringArray(input.descriptions)
+    name: asString(input.name),
+    publisher: asString(input.publisher),
+    releaseDate: asString(input.releaseDate),
+    url: asString(input.url),
+    summary: asString(input.summary)
   };
 };
 
-const normalizeFeaturedSkill = (value: unknown): FeaturedSkill => {
+const normalizeSkill = (value: unknown): JsonResumeSkill => {
   const input = isRecord(value) ? value : {};
   return {
-    skill: asString(input.skill),
-    rating: typeof input.rating === "number" ? input.rating : 4
+    name: asString(input.name),
+    level: asString(input.level),
+    keywords: asStringArray(input.keywords)
   };
 };
 
-const normalizeSkills = (value: unknown): ResumeSkills => {
+const normalizeLanguage = (value: unknown): JsonResumeLanguage => {
   const input = isRecord(value) ? value : {};
   return {
-    featuredSkills: Array.isArray(input.featuredSkills)
-      ? input.featuredSkills.map(normalizeFeaturedSkill)
-      : [...initialAppState.resume.skills.featuredSkills],
-    descriptions: asStringArray(input.descriptions)
+    language: asString(input.language),
+    fluency: asString(input.fluency)
+  };
+};
+
+const normalizeInterest = (value: unknown): JsonResumeInterest => {
+  const input = isRecord(value) ? value : {};
+  return {
+    name: asString(input.name),
+    keywords: asStringArray(input.keywords)
+  };
+};
+
+const normalizeReference = (value: unknown): JsonResumeReference => {
+  const input = isRecord(value) ? value : {};
+  return {
+    name: asString(input.name),
+    reference: asString(input.reference)
+  };
+};
+
+const normalizeProject = (value: unknown): JsonResumeProject => {
+  const input = isRecord(value) ? value : {};
+  return {
+    name: asString(input.name),
+    description: asString(input.description),
+    highlights: asStringArray(input.highlights),
+    keywords: asStringArray(input.keywords),
+    startDate: asString(input.startDate),
+    endDate: asString(input.endDate),
+    url: asString(input.url),
+    roles: asStringArray(input.roles),
+    entity: asString(input.entity),
+    type: asString(input.type)
+  };
+};
+
+const normalizeMeta = (value: unknown): JsonResumeMeta => {
+  const input = isRecord(value) ? value : {};
+  return {
+    canonical: asString(input.canonical),
+    version: asString(input.version, "v1.0.0"),
+    lastModified: asString(input.lastModified)
   };
 };
 
 const normalizeResume = (value: unknown): Resume => {
   const input = isRecord(value) ? value : {};
-  const workExperiences = Array.isArray(input.workExperiences)
-    ? input.workExperiences.map(normalizeWorkExperience)
-    : [...initialAppState.resume.workExperiences];
-  const educations = Array.isArray(input.educations)
-    ? input.educations.map(normalizeEducation)
-    : [...initialAppState.resume.educations];
-  const projects = Array.isArray(input.projects)
-    ? input.projects.map(normalizeProject)
-    : [...initialAppState.resume.projects];
-
   return {
-    profile: normalizeProfile(input.profile),
-    workExperiences: workExperiences.length ? workExperiences : [...initialAppState.resume.workExperiences],
-    educations: educations.length ? educations : [...initialAppState.resume.educations],
-    projects: projects.length ? projects : [...initialAppState.resume.projects],
-    skills: normalizeSkills(input.skills),
-    custom: {
-      descriptions: isRecord(input.custom) ? asStringArray(input.custom.descriptions) : []
-    }
+    basics: normalizeBasics(input.basics),
+    work: Array.isArray(input.work) ? input.work.map(normalizeWork) : [],
+    volunteer: Array.isArray(input.volunteer)
+      ? input.volunteer.map(normalizeVolunteer)
+      : [],
+    education: Array.isArray(input.education)
+      ? input.education.map(normalizeEducation)
+      : [],
+    awards: Array.isArray(input.awards) ? input.awards.map(normalizeAward) : [],
+    certificates: Array.isArray(input.certificates)
+      ? input.certificates.map(normalizeCertificate)
+      : [],
+    publications: Array.isArray(input.publications)
+      ? input.publications.map(normalizePublication)
+      : [],
+    skills: Array.isArray(input.skills) ? input.skills.map(normalizeSkill) : [],
+    languages: Array.isArray(input.languages)
+      ? input.languages.map(normalizeLanguage)
+      : [],
+    interests: Array.isArray(input.interests)
+      ? input.interests.map(normalizeInterest)
+      : [],
+    references: Array.isArray(input.references)
+      ? input.references.map(normalizeReference)
+      : [],
+    projects: Array.isArray(input.projects)
+      ? input.projects.map(normalizeProject)
+      : [],
+    meta: normalizeMeta(input.meta)
   };
 };
 
-const normalizeSettings = (value: unknown): Settings => {
-  const input = isRecord(value) ? value : {};
-  const formToShow = isRecord(input.formToShow) ? input.formToShow : {};
-  const formToHeading = isRecord(input.formToHeading) ? input.formToHeading : {};
-  const showBulletPoints = isRecord(input.showBulletPoints) ? input.showBulletPoints : {};
-  const formsOrderInput = Array.isArray(input.formsOrder) ? input.formsOrder : [];
-  const validForms = ["workExperiences", "educations", "projects", "skills", "custom"] as const;
-  const formsOrder = formsOrderInput.filter(
-    (entry): entry is Settings["formsOrder"][number] =>
-      typeof entry === "string" && (validForms as readonly string[]).includes(entry)
-  );
-
-  return {
-    themeColor: asString(input.themeColor, initialSettings.themeColor),
-    fontFamily: asString(input.fontFamily, initialSettings.fontFamily),
-    fontSize: asString(input.fontSize, initialSettings.fontSize),
-    documentSize: asString(input.documentSize, initialSettings.documentSize),
-    formToShow: {
-      workExperiences:
-        typeof formToShow.workExperiences === "boolean"
-          ? formToShow.workExperiences
-          : initialSettings.formToShow.workExperiences,
-      educations:
-        typeof formToShow.educations === "boolean"
-          ? formToShow.educations
-          : initialSettings.formToShow.educations,
-      projects:
-        typeof formToShow.projects === "boolean"
-          ? formToShow.projects
-          : initialSettings.formToShow.projects,
-      skills:
-        typeof formToShow.skills === "boolean"
-          ? formToShow.skills
-          : initialSettings.formToShow.skills,
-      custom:
-        typeof formToShow.custom === "boolean"
-          ? formToShow.custom
-          : initialSettings.formToShow.custom
-    },
-    formToHeading: {
-      workExperiences: asString(
-        formToHeading.workExperiences,
-        initialSettings.formToHeading.workExperiences
-      ),
-      educations: asString(formToHeading.educations, initialSettings.formToHeading.educations),
-      projects: asString(formToHeading.projects, initialSettings.formToHeading.projects),
-      skills: asString(formToHeading.skills, initialSettings.formToHeading.skills),
-      custom: asString(formToHeading.custom, initialSettings.formToHeading.custom)
-    },
-    formsOrder: formsOrder.length ? formsOrder : [...initialSettings.formsOrder],
-    showBulletPoints: {
-      educations:
-        typeof showBulletPoints.educations === "boolean"
-          ? showBulletPoints.educations
-          : initialSettings.showBulletPoints.educations,
-      projects:
-        typeof showBulletPoints.projects === "boolean"
-          ? showBulletPoints.projects
-          : initialSettings.showBulletPoints.projects,
-      skills:
-        typeof showBulletPoints.skills === "boolean"
-          ? showBulletPoints.skills
-          : initialSettings.showBulletPoints.skills,
-      custom:
-        typeof showBulletPoints.custom === "boolean"
-          ? showBulletPoints.custom
-          : initialSettings.showBulletPoints.custom
-    }
-  };
-};
-
-const normalizeAppState = (value: unknown): NormalizedAppState => {
-  const input = isRecord(value) ? value : {};
-  return {
-    resume: normalizeResume(input.resume),
-    settings: normalizeSettings(input.settings)
-  };
-};
-
-const parseAppState = (raw: string): { value: NormalizedAppState | null; error: string | null } => {
+const parseResume = (raw: string): { value: Resume | null; error: string | null } => {
   try {
     const parsed = JSON.parse(raw) as unknown;
-    return { value: normalizeAppState(parsed), error: null };
+    return { value: normalizeResume(parsed), error: null };
   } catch {
     return { value: null, error: "Invalid JSON. Fix syntax before downloading." };
   }
@@ -216,11 +260,10 @@ function App() {
   const [rawJson, setRawJson] = useState(seedJson);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const parsed = useMemo(() => parseAppState(rawJson), [rawJson]);
-  const normalized = parsed.value ?? initialAppState;
+  const parsed = useMemo(() => parseResume(rawJson), [rawJson]);
 
   useRegisterReactPDFFont();
-  useRegisterReactPDFHyphenationCallback(normalized.settings.fontFamily);
+  useRegisterReactPDFHyphenationCallback(initialSettings.fontFamily);
 
   const onDownload = async () => {
     if (!parsed.value || isGenerating) {
@@ -231,13 +274,13 @@ function App() {
     try {
       const pdfDocument = (
         <ResumePDF
-          resume={parsed.value.resume}
-          settings={parsed.value.settings}
+          resume={parsed.value}
+          settings={initialSettings}
           isPDF={true}
         />
       );
       const blob = await pdf(pdfDocument).toBlob();
-      const name = parsed.value.resume.profile.name.trim() || "resume";
+      const name = parsed.value.basics.name.trim() || "resume";
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -251,9 +294,9 @@ function App() {
 
   return (
     <main className="app-shell">
-      <h1>Resume JSON to PDF</h1>
+      <h1>JSON Resume to PDF</h1>
       <p className="helper-text">
-        Paste a full OpenResume state object with top-level <code>resume</code> and <code>settings</code>.
+        Paste a JSON Resume object using top-level keys like <code>basics</code>, <code>work</code>, and <code>education</code>.
       </p>
       <textarea
         className="json-input"

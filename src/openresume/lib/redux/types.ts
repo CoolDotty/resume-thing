@@ -1,54 +1,136 @@
-export interface ResumeProfile {
+export interface JsonResumeLocation {
+  address: string;
+  postalCode: string;
+  city: string;
+  countryCode: string;
+  region: string;
+}
+
+export interface JsonResumeProfile {
+  network: string;
+  username: string;
+  url: string;
+}
+
+export interface JsonResumeBasics {
   name: string;
+  label: string;
+  image: string;
   email: string;
   phone: string;
   url: string;
   summary: string;
+  location: JsonResumeLocation;
+  profiles: JsonResumeProfile[];
+}
+
+export interface JsonResumeWork {
+  name: string;
   location: string;
+  description: string;
+  position: string;
+  url: string;
+  startDate: string;
+  endDate: string;
+  summary: string;
+  highlights: string[];
 }
 
-export interface ResumeWorkExperience {
-  company: string;
-  jobTitle: string;
+export interface JsonResumeVolunteer {
+  organization: string;
+  position: string;
+  url: string;
+  startDate: string;
+  endDate: string;
+  summary: string;
+  highlights: string[];
+}
+
+export interface JsonResumeEducation {
+  institution: string;
+  url: string;
+  area: string;
+  studyType: string;
+  startDate: string;
+  endDate: string;
+  score: string;
+  courses: string[];
+}
+
+export interface JsonResumeAward {
+  title: string;
   date: string;
-  descriptions: string[];
+  awarder: string;
+  summary: string;
 }
 
-export interface ResumeEducation {
-  school: string;
-  degree: string;
+export interface JsonResumeCertificate {
+  name: string;
   date: string;
-  gpa: string;
-  descriptions: string[];
+  issuer: string;
+  url: string;
 }
 
-export interface ResumeProject {
-  project: string;
-  date: string;
-  descriptions: string[];
+export interface JsonResumePublication {
+  name: string;
+  publisher: string;
+  releaseDate: string;
+  url: string;
+  summary: string;
 }
 
-export interface FeaturedSkill {
-  skill: string;
-  rating: number;
+export interface JsonResumeSkill {
+  name: string;
+  level: string;
+  keywords: string[];
 }
 
-export interface ResumeSkills {
-  featuredSkills: FeaturedSkill[];
-  descriptions: string[];
+export interface JsonResumeLanguage {
+  language: string;
+  fluency: string;
 }
 
-export interface ResumeCustom {
-  descriptions: string[];
+export interface JsonResumeInterest {
+  name: string;
+  keywords: string[];
+}
+
+export interface JsonResumeReference {
+  name: string;
+  reference: string;
+}
+
+export interface JsonResumeProject {
+  name: string;
+  description: string;
+  highlights: string[];
+  keywords: string[];
+  startDate: string;
+  endDate: string;
+  url: string;
+  roles: string[];
+  entity: string;
+  type: string;
+}
+
+export interface JsonResumeMeta {
+  canonical: string;
+  version: string;
+  lastModified: string;
 }
 
 export interface Resume {
-  profile: ResumeProfile;
-  workExperiences: ResumeWorkExperience[];
-  educations: ResumeEducation[];
-  projects: ResumeProject[];
-  skills: ResumeSkills;
-  custom: ResumeCustom;
+  basics: JsonResumeBasics;
+  work: JsonResumeWork[];
+  volunteer: JsonResumeVolunteer[];
+  education: JsonResumeEducation[];
+  awards: JsonResumeAward[];
+  certificates: JsonResumeCertificate[];
+  publications: JsonResumePublication[];
+  skills: JsonResumeSkill[];
+  languages: JsonResumeLanguage[];
+  interests: JsonResumeInterest[];
+  references: JsonResumeReference[];
+  projects: JsonResumeProject[];
+  meta: JsonResumeMeta;
 }
-
-export type ResumeKey = keyof Resume;

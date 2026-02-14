@@ -6,26 +6,25 @@ import {
   ResumePDFText
 } from "components/Resume/ResumePDF/common";
 import { styles, spacing } from "components/Resume/ResumePDF/styles";
-import { formatDateRange, joinNonEmpty } from "lib/redux/resumeFormatting";
-import type { JsonResumeEducation } from "lib/redux/types";
+import { formatDateRange } from "lib/redux/resumeFormatting";
+import type { JsonResumeVolunteer } from "lib/redux/types";
 
-export const ResumePDFEducation = ({
+export const ResumePDFVolunteer = ({
   heading,
-  education,
+  volunteer,
   themeColor,
   showBulletPoints,
   isPDF
 }: {
   heading: string;
-  education: JsonResumeEducation[];
+  volunteer: JsonResumeVolunteer[];
   themeColor: string;
   showBulletPoints: boolean;
   isPDF: boolean;
 }) => {
   return (
     <ResumePDFSection themeColor={themeColor} heading={heading}>
-      {education.map((entry, idx) => {
-        const study = joinNonEmpty([entry.studyType, entry.area], " in ");
+      {volunteer.map((entry, idx) => {
         const date = formatDateRange(entry.startDate, entry.endDate);
 
         return (
@@ -36,21 +35,25 @@ export const ResumePDFEducation = ({
                   src={entry.url.startsWith("http") ? entry.url : `https://${entry.url}`}
                   isPDF={isPDF}
                 >
-                  <ResumePDFText bold={true}>{entry.institution}</ResumePDFText>
+                  <ResumePDFText bold={true}>{entry.organization}</ResumePDFText>
                 </ResumePDFLink>
               ) : (
-                <ResumePDFText bold={true}>{entry.institution}</ResumePDFText>
+                <ResumePDFText bold={true}>{entry.organization}</ResumePDFText>
               )}
               <ResumePDFText>{date}</ResumePDFText>
             </View>
-            <View style={{ ...styles.flexRowBetween, marginTop: spacing["1"] }}>
-              <ResumePDFText>{study}</ResumePDFText>
-              <ResumePDFText>{entry.score}</ResumePDFText>
+            <View style={{ marginTop: spacing["1"] }}>
+              <ResumePDFText>{entry.position}</ResumePDFText>
             </View>
-            {entry.courses.length > 0 && (
+            {entry.summary && (
+              <View style={{ marginTop: spacing["1"] }}>
+                <ResumePDFText>{entry.summary}</ResumePDFText>
+              </View>
+            )}
+            {entry.highlights.length > 0 && (
               <View style={{ ...styles.flexCol, marginTop: spacing["1.5"] }}>
                 <ResumePDFBulletList
-                  items={entry.courses}
+                  items={entry.highlights}
                   showBulletPoints={showBulletPoints}
                 />
               </View>

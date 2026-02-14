@@ -1,27 +1,97 @@
 import { View } from "@react-pdf/renderer";
 import {
   ResumePDFIcon,
-  type IconType,
+  type IconType
 } from "components/Resume/ResumePDF/common/ResumePDFIcon";
 import { styles, spacing } from "components/Resume/ResumePDF/styles";
 import {
   ResumePDFLink,
   ResumePDFSection,
-  ResumePDFText,
+  ResumePDFText
 } from "components/Resume/ResumePDF/common";
-import type { ResumeProfile } from "lib/redux/types";
+import { joinNonEmpty } from "lib/redux/resumeFormatting";
+import type { JsonResumeBasics } from "lib/redux/types";
 
 export const ResumePDFProfile = ({
-  profile,
+  basics,
   themeColor,
-  isPDF,
+  isPDF
 }: {
-  profile: ResumeProfile;
+  basics: JsonResumeBasics;
   themeColor: string;
   isPDF: boolean;
 }) => {
-  const { name, email, phone, url, summary, location } = profile;
-  const iconProps = { email, phone, location, url };
+  const { name, label, email, phone, url, summary, location, profiles } = basics;
+  const locationText = joinNonEmpty(
+    [location.address, location.city, location.region, location.postalCode, location.countryCode],
+    ", "
+  );
+
+  const contactRows: Array<{
+    key: string;
+    value: string;
+    iconType: IconType;
+    src: string;
+  }> = [];
+
+  if (email) {
+    contactRows.push({
+      key: "email",
+      value: email,
+      iconType: "email",
+      src: `mailto:${email}`
+    });
+  }
+
+  if (phone) {
+    contactRows.push({
+      key: "phone",
+      value: phone,
+      iconType: "phone",
+      src: `tel:${phone.replace(/[^\d+]/g, "")}`
+    });
+  }
+
+  if (locationText) {
+    contactRows.push({
+      key: "location",
+      value: locationText,
+      iconType: "location",
+      src: ""
+    });
+  }
+
+  if (url) {
+    contactRows.push({
+      key: "url",
+      value: url,
+      iconType: "url",
+      src: url.startsWith("http") ? url : `https://${url}`
+    });
+  }
+
+  profiles.forEach((profile, idx) => {
+    const profileUrl = profile.url || "";
+    if (!profileUrl) {
+      return;
+    }
+
+    const network = profile.network.toLowerCase();
+    const iconType: IconType =
+      network.includes("github")
+        ? "url_github"
+        : network.includes("linkedin")
+          ? "url_linkedin"
+          : "url";
+
+    const text = joinNonEmpty([profile.network, profile.username], " - ") || profileUrl;
+    contactRows.push({
+      key: `profile-${idx}`,
+      value: text,
+      iconType,
+      src: profileUrl.startsWith("http") ? profileUrl : `https://${profileUrl}`
+    });
+  });
 
   return (
     <ResumePDFSection style={{ marginTop: spacing["4"] }}>
@@ -32,69 +102,43 @@ export const ResumePDFProfile = ({
       >
         {name}
       </ResumePDFText>
+      {label && <ResumePDFText>{label}</ResumePDFText>}
       {summary && <ResumePDFText>{summary}</ResumePDFText>}
-      <View
-        style={{
-          ...styles.flexRowBetween,
-          flexWrap: "wrap",
-          marginTop: spacing["0.5"],
-        }}
-      >
-        {Object.entries(iconProps).map(([key, value]) => {
-          if (!value) return null;
+      {contactRows.length > 0 && (
+        <View
+          style={{
+            ...styles.flexRowBetween,
+            flexWrap: "wrap",
+            marginTop: spacing["0.5"],
+            gap: spacing["1"]
+          }}
+        >
+          {contactRows.map(({ key, value, iconType, src }) => {
+            const content = (
+              <View
+                style={{
+                  ...styles.flexRow,
+                  alignItems: "center",
+                  gap: spacing["1"]
+                }}
+              >
+                <ResumePDFIcon type={iconType} isPDF={isPDF} />
+                <ResumePDFText>{value}</ResumePDFText>
+              </View>
+            );
 
-          let iconType = key as IconType;
-          if (key === "url") {
-            if (value.includes("github")) {
-              iconType = "url_github";
-            } else if (value.includes("linkedin")) {
-              iconType = "url_linkedin";
-            }
-          }
-
-          const shouldUseLinkWrapper = ["email", "url", "phone"].includes(key);
-          const Wrapper = ({ children }: { children: React.ReactNode }) => {
-            if (!shouldUseLinkWrapper) return <>{children}</>;
-
-            let src = "";
-            switch (key) {
-              case "email": {
-                src = `mailto:${value}`;
-                break;
-              }
-              case "phone": {
-                src = `tel:${value.replace(/[^\d+]/g, "")}`; // Keep only + and digits
-                break;
-              }
-              default: {
-                src = value.startsWith("http") ? value : `https://${value}`;
-              }
+            if (!src) {
+              return <View key={key}>{content}</View>;
             }
 
             return (
-              <ResumePDFLink src={src} isPDF={isPDF}>
-                {children}
+              <ResumePDFLink key={key} src={src} isPDF={isPDF}>
+                {content}
               </ResumePDFLink>
             );
-          };
-
-          return (
-            <View
-              key={key}
-              style={{
-                ...styles.flexRow,
-                alignItems: "center",
-                gap: spacing["1"],
-              }}
-            >
-              <ResumePDFIcon type={iconType} isPDF={isPDF} />
-              <Wrapper>
-                <ResumePDFText>{value}</ResumePDFText>
-              </Wrapper>
-            </View>
-          );
-        })}
-      </View>
+          })}
+        </View>
+      )}
     </ResumePDFSection>
   );
 };
