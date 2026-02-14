@@ -155,7 +155,7 @@ export const ResumePDFProfile = ({
                       flexShrink: 1,
                       flexBasis: 0,
                       minWidth: 0,
-                      justifyContent: "center",
+                      justifyContent: "flex-start",
                       marginTop: spacing["2"]
                     }}
                   >
