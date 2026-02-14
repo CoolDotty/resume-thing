@@ -56,7 +56,7 @@ export const ResumePDF = ({
   const summary = basics.summary.trim();
   const themeColor = settings.themeColor || DEFAULT_FONT_COLOR;
   const showFormsOrder = formsOrder.filter((form) => formToShow[form]);
-  const pageTopPadding = "134pt";
+  const pageTopPadding = "104pt";
 
   const formTypeToComponent: { [type in ShowForm]: () => JSX.Element | null } = {
     work: () =>
@@ -196,10 +196,8 @@ export const ResumePDF = ({
             <View
               style={{
                 ...styles.flexCol,
-                padding: `${spacing[2]} ${spacing[20]}`,
-                paddingBottom: spacing[3],
-                borderBottomWidth: 1,
-                borderBottomColor: "#e5e7eb"
+                padding: `${spacing[2]} ${spacing[16]}`,
+                paddingBottom: spacing[3]
               }}
             >
               <ResumePDFProfile
@@ -212,8 +210,7 @@ export const ResumePDF = ({
           <View
             style={{
               ...styles.flexCol,
-              padding: `${spacing[0]} ${spacing[20]} ${spacing[0]} ${spacing[20]}`,
-              marginTop: "-12pt"
+              padding: `${spacing[0]} ${spacing[16]} ${spacing[0]} ${spacing[16]}`
             }}
           >
             {summary && (

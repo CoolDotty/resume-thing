@@ -91,7 +91,7 @@ export const ResumePDFProfile = ({
   });
 
   return (
-    <ResumePDFSection style={{ marginTop: spacing["4"] }}>
+    <ResumePDFSection style={{ marginTop: spacing["4"], gap: spacing["1"] }}>
       <ResumePDFText
         bold={true}
         themeColor={themeColor}
@@ -103,13 +103,18 @@ export const ResumePDFProfile = ({
       {contactRows.length > 0 && (
         <View
           style={{
-            ...styles.flexRowBetween,
+            ...styles.flexRow,
             flexWrap: "wrap",
-            marginTop: spacing["0.5"],
-            gap: spacing["1"]
+            justifyContent: "space-between",
+            width: "100%",
+            marginTop: spacing["0"]
           }}
         >
-          {contactRows.map(({ key, value, iconType, src }) => {
+          {contactRows.map(({ key, value, iconType, src }, idx) => {
+            const columnIndex = idx % 4
+            const columnJustifyContent =
+              columnIndex === 0 ? "flex-start" : columnIndex === 3 ? "flex-end" : "center"
+
             const content = (
               <View
                 style={{
@@ -123,14 +128,24 @@ export const ResumePDFProfile = ({
               </View>
             );
 
-            if (!src) {
-              return <View key={key}>{content}</View>;
-            }
-
             return (
-              <ResumePDFLink key={key} src={src} isPDF={isPDF}>
-                {content}
-              </ResumePDFLink>
+              <View
+                key={key}
+                style={{
+                  ...styles.flexRow,
+                  width: "25%",
+                  justifyContent: columnJustifyContent,
+                  marginTop: spacing["2"]
+                }}
+              >
+                {src ? (
+                  <ResumePDFLink src={src} isPDF={isPDF}>
+                    {content}
+                  </ResumePDFLink>
+                ) : (
+                  content
+                )}
+              </View>
             );
           })}
         </View>
