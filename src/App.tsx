@@ -310,7 +310,7 @@ const seedJson = `{  "basics": {
     ],
     "signoff": "Sincerely,",
     "signatureName": "Alex Thompson",
-    "signatureImage": "./alexthompsonsignature.png"
+    "signatureImage": "https://example.com/alexthompsonsignature.png"
   }
 }`
 
@@ -389,9 +389,22 @@ const normalizeCoverLetter = (value: unknown): JsonResumeCoverLetter | null => {
     return null;
   }
 
-  const signatureImage = isRecord(value.signatureImage)
+  const rawSignatureImage = isRecord(value.signatureImage)
     ? asString(value.signatureImage.url)
     : asString(value.signatureImage);
+  let signatureImage = rawSignatureImage;
+  if (isValidUrl(rawSignatureImage)) {
+    try {
+      const url = new URL(rawSignatureImage);
+      const hostname = url.hostname.toLowerCase();
+      if (hostname === "example.com" || hostname.endsWith(".example.com")) {
+        const fileName = url.pathname.split("/").filter(Boolean).at(-1) ?? "";
+        signatureImage = fileName ? `./${fileName}` : "./";
+      }
+    } catch {
+      // Ignore malformed URL and keep original value.
+    }
+  }
 
   return {
     companyName: asString(value.companyName),
