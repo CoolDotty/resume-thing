@@ -27,24 +27,41 @@ export const ResumePDFInterests = ({
       showHeading={false}
       style={{ gap: spacing[0] }}
     >
-      {interests.map((interest, idx) => (
-        <ResumePDFAtomBlock key={idx} style={idx !== 0 ? { marginTop: spacing["1.5"] } : {}}>
-          <View style={{ ...styles.flexCol, gap: spacing["2"] }}>
-            {idx === 0 && <ResumePDFSectionHeading themeColor={themeColor} heading={heading} />}
-            <View>
-              <ResumePDFText bold={true}>{interest.name}</ResumePDFText>
-              {interest.keywords.length > 0 && (
-                <View style={{ ...styles.flexCol, marginTop: spacing["0.5"] }}>
-                  <ResumePDFBulletList
-                    items={interest.keywords}
-                    showBulletPoints={showBulletPoints}
-                  />
+      <ResumePDFAtomBlock>
+        <View style={{ ...styles.flexCol, gap: spacing["2"] }}>
+          <ResumePDFSectionHeading themeColor={themeColor} heading={heading} />
+          <View style={{ ...styles.flexRow, flexWrap: "wrap", marginHorizontal: "-3pt" }}>
+            {interests.map((interest, idx) => (
+              <View
+                key={idx}
+                style={{
+                  width: "33.3333%",
+                  paddingHorizontal: spacing["1"],
+                  marginBottom: spacing["2"]
+                }}
+              >
+                <View
+                  style={{
+                    ...styles.flexCol,
+                    padding: spacing["2"],
+                    gap: spacing["0.5"]
+                  }}
+                >
+                  <ResumePDFText bold={true}>{interest.name}</ResumePDFText>
+                  {interest.keywords.length > 0 && (
+                    <View style={styles.flexCol}>
+                      <ResumePDFBulletList
+                        items={interest.keywords}
+                        showBulletPoints={showBulletPoints}
+                      />
+                    </View>
+                  )}
                 </View>
-              )}
-            </View>
+              </View>
+            ))}
           </View>
-        </ResumePDFAtomBlock>
-      ))}
+        </View>
+      </ResumePDFAtomBlock>
     </ResumePDFSection>
   )
 }
