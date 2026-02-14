@@ -11,6 +11,9 @@ import type {
   JsonResumeAward,
   JsonResumeBasics,
   JsonResumeCertificate,
+  JsonResumeCoverLetter,
+  JsonResumeCoverLetterAddress,
+  JsonResumeCoverLetterBodyBlock,
   JsonResumeEducation,
   JsonResumeInterest,
   JsonResumeLanguage,
@@ -42,6 +45,80 @@ const asStringArray = (value: unknown): string[] => {
     return [];
   }
   return value.filter((entry): entry is string => typeof entry === "string");
+};
+
+const isValidUrl = (value: string): boolean => {
+  if (!value.trim()) {
+    return false;
+  }
+
+  try {
+    new URL(value);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const asCoverLetterBody = (value: unknown): JsonResumeCoverLetterBodyBlock[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.reduce<JsonResumeCoverLetterBodyBlock[]>((blocks, entry) => {
+    if (typeof entry === "string") {
+      if (entry.trim()) {
+        blocks.push(entry);
+      }
+      return blocks;
+    }
+    if (Array.isArray(entry)) {
+      const points = entry.filter((point): point is string => typeof point === "string");
+      if (points.length > 0) {
+        blocks.push(points);
+      }
+      return blocks;
+    }
+    return blocks;
+  }, []);
+};
+
+const normalizeCoverLetterAddress = (value: unknown): JsonResumeCoverLetterAddress => {
+  if (Array.isArray(value)) {
+    return value.filter((entry): entry is string => typeof entry === "string");
+  }
+
+  if (typeof value === "string") {
+    return isValidUrl(value) ? { url: value, label: "" } : [value];
+  }
+
+  if (isRecord(value)) {
+    return {
+      url: asString(value.url),
+      label: asString(value.label)
+    };
+  }
+
+  return [];
+};
+
+const normalizeCoverLetter = (value: unknown): JsonResumeCoverLetter | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const signatureImage = isRecord(value.signatureImage)
+    ? asString(value.signatureImage.url)
+    : asString(value.signatureImage);
+
+  return {
+    companyName: asString(value.companyName),
+    companyAddress: normalizeCoverLetterAddress(value.companyAddress),
+    body: asCoverLetterBody(value.body),
+    signoff: asString(value.signoff),
+    signatureName: asString(value.signatureName),
+    signatureImage
+  };
 };
 
 const normalizeLocation = (value: unknown): JsonResumeLocation => {
@@ -214,6 +291,8 @@ const normalizeMeta = (value: unknown): JsonResumeMeta => {
 
 const normalizeResume = (value: unknown): Resume => {
   const input = isRecord(value) ? value : {};
+  const coverLetter = normalizeCoverLetter(input["x-coverLetter"]);
+
   return {
     basics: normalizeBasics(input.basics),
     work: Array.isArray(input.work) ? input.work.map(normalizeWork) : [],
@@ -243,7 +322,8 @@ const normalizeResume = (value: unknown): Resume => {
     projects: Array.isArray(input.projects)
       ? input.projects.map(normalizeProject)
       : [],
-    meta: normalizeMeta(input.meta)
+    meta: normalizeMeta(input.meta),
+    "x-coverLetter": coverLetter
   };
 };
 
@@ -259,6 +339,9 @@ const parseResume = (raw: string): { value: Resume | null; error: string | null 
 function App() {
   const [rawJson, setRawJson] = useState(seedJson);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [downloadVariant, setDownloadVariant] = useState<"resume" | "cover-letter" | "combined" | null>(
+    null
+  );
   const [isPreviewGenerating, setIsPreviewGenerating] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
@@ -269,11 +352,15 @@ function App() {
   useRegisterReactPDFFont();
   useRegisterReactPDFHyphenationCallback(initialSettings.fontFamily);
 
-  const createPdfDocument = (resume: Resume) => (
+  const createPdfDocument = (
+    resume: Resume,
+    mode: "resume" | "cover-letter" | "combined"
+  ) => (
     <ResumePDF
       resume={resume}
       settings={initialSettings}
       isPDF={true}
+      mode={mode}
     />
   );
 
@@ -309,7 +396,7 @@ function App() {
       setIsPreviewGenerating(true);
       setPreviewError(null);
       try {
-        const blob = await pdf(createPdfDocument(resume)).toBlob();
+        const blob = await pdf(createPdfDocument(resume, "combined")).toBlob();
         if (isCancelled) {
           return;
         }
@@ -332,23 +419,37 @@ function App() {
     };
   }, [parsed.value, parsed.error]);
 
-  const onDownload = async () => {
+  const hasCoverLetter = Boolean(parsed.value?.["x-coverLetter"]);
+
+  const onDownload = async (mode: "resume" | "cover-letter" | "combined") => {
     if (!parsed.value || isGenerating) {
       return;
     }
 
+    if (mode === "cover-letter" && !hasCoverLetter) {
+      return;
+    }
+
     setIsGenerating(true);
+    setDownloadVariant(mode);
     try {
-      const blob = await pdf(createPdfDocument(parsed.value)).toBlob();
+      const blob = await pdf(createPdfDocument(parsed.value, mode)).toBlob();
       const name = parsed.value.basics.name.trim() || "resume";
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = `${name}-resume.pdf`;
+      if (mode === "resume") {
+        anchor.download = `${name}-resume.pdf`;
+      } else if (mode === "cover-letter") {
+        anchor.download = `${name}-cover-letter.pdf`;
+      } else {
+        anchor.download = `${name}-resume-cover-letter.pdf`;
+      }
       anchor.click();
       URL.revokeObjectURL(url);
     } finally {
       setIsGenerating(false);
+      setDownloadVariant(null);
     }
   };
 
@@ -356,7 +457,8 @@ function App() {
     <main className="app-shell">
       <h1>JSON Resume to PDF</h1>
       <p className="helper-text">
-        Paste a JSON Resume object using top-level keys like <code>basics</code>, <code>work</code>, and <code>education</code>.
+        Paste a JSON Resume object using top-level keys like <code>basics</code>, <code>work</code>, and <code>education</code>.{" "}
+        Add <code>x-coverLetter</code> to include a cover letter page.
       </p>
       <section className="editor-preview-grid">
         <div className="panel">
@@ -391,13 +493,33 @@ function App() {
       <p className={parsed.error ? "status error" : "status ok"}>
         {parsed.error ?? "JSON is valid. Ready to download."}
       </p>
-      <button
-        type="button"
-        disabled={Boolean(parsed.error) || isGenerating}
-        onClick={onDownload}
-      >
-        {isGenerating ? "Generating PDF..." : "Download PDF"}
-      </button>
+      <div className="actions">
+        <button
+          type="button"
+          disabled={Boolean(parsed.error) || isGenerating}
+          onClick={() => onDownload("resume")}
+        >
+          {isGenerating && downloadVariant === "resume" ? "Generating Resume..." : "Download Resume"}
+        </button>
+        <button
+          type="button"
+          disabled={Boolean(parsed.error) || isGenerating || !hasCoverLetter}
+          onClick={() => onDownload("cover-letter")}
+        >
+          {isGenerating && downloadVariant === "cover-letter"
+            ? "Generating Cover Letter..."
+            : "Download Cover Letter"}
+        </button>
+        <button
+          type="button"
+          disabled={Boolean(parsed.error) || isGenerating}
+          onClick={() => onDownload("combined")}
+        >
+          {isGenerating && downloadVariant === "combined"
+            ? "Generating Combined PDF..."
+            : "Download Resume + Cover Letter"}
+        </button>
+      </div>
     </main>
   );
 }

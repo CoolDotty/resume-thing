@@ -18,15 +18,32 @@ import { ResumePDFReferences } from "components/Resume/ResumePDF/ResumePDFRefere
 import { ResumePDFVolunteer } from "components/Resume/ResumePDF/ResumePDFVolunteer"
 import { ResumePDFSummary } from "components/Resume/ResumePDF/ResumePDFSummary"
 import { ResumePDFText } from "components/Resume/ResumePDF/common"
+import { ResumePDFCoverLetter } from "components/Resume/ResumePDF/ResumePDFCoverLetter"
+
+const PageNumberFooter = () => (
+  <Text
+    fixed={true}
+    style={{
+      color: DEFAULT_FONT_COLOR,
+      fontSize: "9pt",
+      position: "absolute",
+      bottom: spacing[2],
+      right: spacing[16]
+    }}
+    render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
+  />
+)
 
 export const ResumePDF = ({
   resume,
   settings,
-  isPDF = false
+  isPDF = false,
+  mode = "combined"
 }: {
   resume: Resume
   settings: Settings
   isPDF?: boolean
+  mode?: "resume" | "cover-letter" | "combined"
 }) => {
   const {
     basics,
@@ -40,7 +57,8 @@ export const ResumePDF = ({
     skills,
     languages,
     interests,
-    references
+    references,
+    "x-coverLetter": coverLetter
   } = resume
 
   const {
@@ -59,6 +77,8 @@ export const ResumePDF = ({
   const themeColor = settings.themeColor || DEFAULT_FONT_COLOR
   const showFormsOrder = formsOrder.filter((form) => formToShow[form])
   const compactHeaderHeight = spacing[24]
+  const shouldRenderResume = mode !== "cover-letter"
+  const shouldRenderCoverLetter = Boolean(coverLetter) && mode !== "resume"
 
   const formTypeToComponent: { [type in ShowForm]: () => JSX.Element | null } = {
     work: () =>
@@ -162,6 +182,50 @@ export const ResumePDF = ({
   return (
     <>
       <Document title={`${name} Resume`} author={name} producer={"OpenResume"}>
+        {shouldRenderCoverLetter && coverLetter && (
+          <Page
+            size={documentSize === "A4" ? "A4" : "LETTER"}
+            style={{
+              ...styles.flexCol,
+              color: DEFAULT_FONT_COLOR,
+              fontFamily,
+              fontSize: fontSize + "pt",
+              paddingTop: compactHeaderHeight,
+              paddingBottom: spacing[8]
+            }}
+          >
+            <View style={{ ...styles.flexCol, marginTop: `-${compactHeaderHeight}` }}>
+              {Boolean(settings.themeColor) && (
+                <View
+                  style={{
+                    width: spacing.full,
+                    height: spacing[3.5],
+                    backgroundColor: themeColor
+                  }}
+                />
+              )}
+              <View
+                style={{
+                  ...styles.flexCol,
+                  padding: `${spacing[2]} ${spacing[16]}`,
+                  paddingBottom: spacing[3]
+                }}
+              >
+                <ResumePDFProfile basics={basics} themeColor={themeColor} isPDF={isPDF} />
+              </View>
+            </View>
+            <View
+              style={{
+                ...styles.flexCol,
+                padding: `${spacing[0]} ${spacing[16]} ${spacing[0]} ${spacing[16]}`
+              }}
+            >
+              <ResumePDFCoverLetter coverLetter={coverLetter} isPDF={isPDF} />
+            </View>
+            <PageNumberFooter />
+          </Page>
+        )}
+        {shouldRenderResume && (
         <Page
           size={documentSize === "A4" ? "A4" : "LETTER"}
           style={{
@@ -202,8 +266,8 @@ export const ResumePDF = ({
               left: spacing[0],
               right: spacing[0]
             }}
-            render={({ pageNumber }) =>
-              pageNumber > 1 ? (
+            render={({ subPageNumber }) =>
+              subPageNumber > 1 ? (
                 <>
                   {Boolean(settings.themeColor) && (
                     <View
@@ -244,18 +308,9 @@ export const ResumePDF = ({
               return <Component key={form} />
             })}
           </View>
-          <Text
-            fixed={true}
-            style={{
-              color: DEFAULT_FONT_COLOR,
-              fontSize: "9pt",
-              position: "absolute",
-              bottom: spacing[2],
-              right: spacing[16]
-            }}
-            render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
-          />
+          <PageNumberFooter />
         </Page>
+        )}
       </Document>
       <SuppressResumePDFErrorMessage />
     </>

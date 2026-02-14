@@ -119,6 +119,24 @@ export interface JsonResumeMeta {
   lastModified: string;
 }
 
+export interface JsonResumeCoverLetterAddressLink {
+  url: string;
+  label: string;
+}
+
+export type JsonResumeCoverLetterAddress = string[] | JsonResumeCoverLetterAddressLink;
+
+export type JsonResumeCoverLetterBodyBlock = string | string[];
+
+export interface JsonResumeCoverLetter {
+  companyName: string;
+  companyAddress: JsonResumeCoverLetterAddress;
+  body: JsonResumeCoverLetterBodyBlock[];
+  signoff: string;
+  signatureName: string;
+  signatureImage: string;
+}
+
 export interface Resume {
   basics: JsonResumeBasics;
   work: JsonResumeWork[];
@@ -133,4 +151,5 @@ export interface Resume {
   references: JsonResumeReference[];
   projects: JsonResumeProject[];
   meta: JsonResumeMeta;
+  "x-coverLetter": JsonResumeCoverLetter | null;
 }

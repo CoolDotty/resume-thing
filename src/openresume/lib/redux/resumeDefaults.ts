@@ -3,6 +3,7 @@ import type {
   JsonResumeAward,
   JsonResumeBasics,
   JsonResumeCertificate,
+  JsonResumeCoverLetter,
   JsonResumeEducation,
   JsonResumeInterest,
   JsonResumeLanguage,
@@ -139,6 +140,23 @@ export const initialMeta: JsonResumeMeta = {
   lastModified: ""
 };
 
+export const initialCoverLetter: JsonResumeCoverLetter = {
+  companyName: "Acme Inc",
+  companyAddress: ["123 Main St", "Suite 400", "San Francisco, CA 94105"],
+  body: [
+    "I am excited to apply for this role and contribute to your team.",
+    [
+      "Led TypeScript migrations across multiple frontend applications",
+      "Improved reliability of document generation workflows",
+      "Partnered with design and product to ship high-impact features quickly"
+    ],
+    "Thank you for your time and consideration."
+  ],
+  signoff: "Sincerely,",
+  signatureName: "Jane Candidate",
+  signatureImage: "https://via.placeholder.com/360x120.png?text=Signature"
+};
+
 export const initialResumeState: Resume = {
   basics: initialBasics,
   work: [],
@@ -152,7 +170,8 @@ export const initialResumeState: Resume = {
   interests: [],
   references: [],
   projects: [],
-  meta: initialMeta
+  meta: initialMeta,
+  "x-coverLetter": initialCoverLetter
 };
 
 export const initialAppState = {
