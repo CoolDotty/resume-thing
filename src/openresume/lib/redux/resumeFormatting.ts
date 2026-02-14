@@ -29,3 +29,6 @@ export const formatDateRange = (startDate: string, endDate: string): string => {
 
   return start || end;
 };
+
+export const formatDisplayUrl = (value: string): string =>
+  value.replace(/^https?:\/\//i, "");

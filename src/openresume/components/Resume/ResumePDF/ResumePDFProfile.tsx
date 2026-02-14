@@ -9,7 +9,7 @@ import {
   ResumePDFSection,
   ResumePDFText
 } from "components/Resume/ResumePDF/common";
-import { joinNonEmpty } from "lib/redux/resumeFormatting";
+import { formatDisplayUrl, joinNonEmpty } from "lib/redux/resumeFormatting";
 import type { JsonResumeBasics } from "lib/redux/types";
 
 export const ResumePDFProfile = ({
@@ -61,7 +61,7 @@ export const ResumePDFProfile = ({
   if (url) {
     contactRows.push({
       key: "url",
-      value: url,
+      value: formatDisplayUrl(url),
       iconType: "url",
       src: url.startsWith("http") ? url : `https://${url}`
     });
@@ -81,7 +81,8 @@ export const ResumePDFProfile = ({
           ? "url_linkedin"
           : "url";
 
-    const text = joinNonEmpty([profile.network, profile.username], " - ") || profileUrl;
+    const text =
+      joinNonEmpty([profile.network, profile.username], " - ") || formatDisplayUrl(profileUrl);
     contactRows.push({
       key: `profile-${idx}`,
       value: text,

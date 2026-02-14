@@ -6,6 +6,7 @@ import {
   ResumePDFText
 } from "components/Resume/ResumePDF/common"
 import { styles, spacing } from "components/Resume/ResumePDF/styles"
+import { formatDisplayUrl } from "lib/redux/resumeFormatting"
 import type {
   JsonResumeCoverLetter,
   JsonResumeCoverLetterAddress
@@ -44,7 +45,8 @@ export const ResumePDFCoverLetter = ({
           coverLetter.companyAddress.url ? (
             <ResumePDFLink src={coverLetter.companyAddress.url} isPDF={isPDF}>
               <ResumePDFText>
-                {coverLetter.companyAddress.label || coverLetter.companyAddress.url}
+                {coverLetter.companyAddress.label ||
+                  formatDisplayUrl(coverLetter.companyAddress.url)}
               </ResumePDFText>
             </ResumePDFLink>
           ) : null
