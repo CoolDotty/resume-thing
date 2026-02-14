@@ -16,6 +16,7 @@ import { ResumePDFLanguages } from "components/Resume/ResumePDF/ResumePDFLanguag
 import { ResumePDFPublications } from "components/Resume/ResumePDF/ResumePDFPublications";
 import { ResumePDFReferences } from "components/Resume/ResumePDF/ResumePDFReferences";
 import { ResumePDFVolunteer } from "components/Resume/ResumePDF/ResumePDFVolunteer";
+import { ResumePDFText } from "components/Resume/ResumePDF/common";
 
 export const ResumePDF = ({
   resume,
@@ -54,6 +55,7 @@ export const ResumePDF = ({
   const name = basics.name || "Resume";
   const themeColor = settings.themeColor || DEFAULT_FONT_COLOR;
   const showFormsOrder = formsOrder.filter((form) => formToShow[form]);
+  const hasHeaderLabel = Boolean(basics.label);
 
   const formTypeToComponent: { [type in ShowForm]: () => JSX.Element | null } = {
     work: () =>
@@ -170,19 +172,47 @@ export const ResumePDF = ({
             fontSize: fontSize + "pt"
           }}
         >
-          {Boolean(settings.themeColor) && (
+          <View
+            fixed={true}
+            style={{
+              ...styles.flexCol,
+              position: "absolute",
+              top: spacing[0],
+              left: spacing[0],
+              right: spacing[0]
+            }}
+          >
+            {Boolean(settings.themeColor) && (
+              <View
+                style={{
+                  width: spacing.full,
+                  height: spacing[3.5],
+                  backgroundColor: themeColor
+                }}
+              />
+            )}
             <View
               style={{
-                width: spacing.full,
-                height: spacing[3.5],
-                backgroundColor: themeColor
+                ...styles.flexCol,
+                padding: `${spacing[2]} ${spacing[20]}`,
+                borderBottomWidth: 1,
+                borderBottomColor: "#e5e7eb"
               }}
-            />
-          )}
+            >
+              <ResumePDFText bold={true} style={{ fontSize: "12pt" }}>
+                {name}
+              </ResumePDFText>
+              {hasHeaderLabel && (
+                <ResumePDFText style={{ fontSize: "9pt", color: "#4b5563" }}>
+                  {basics.label}
+                </ResumePDFText>
+              )}
+            </View>
+          </View>
           <View
             style={{
               ...styles.flexCol,
-              padding: `${spacing[0]} ${spacing[20]}`
+              padding: `${spacing[12]} ${spacing[20]} ${spacing[0]} ${spacing[20]}`
             }}
           >
             <ResumePDFProfile
