@@ -3,12 +3,20 @@
 }
 
 .app {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
-  place-content: center;
-  gap: 1rem;
-  text-align: center;
+  grid-template-rows: auto 1fr;
+  gap: 1.25rem;
   padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.controls {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+  text-align: center;
 }
 
 h1 {
@@ -33,4 +41,26 @@ button:hover {
 button:focus-visible {
   outline: 2px solid #1a73e8;
   outline-offset: 2px;
+}
+
+.preview {
+  width: 100%;
+  min-height: 60dvh;
+  border: 1px solid #d4d4d4;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.literal {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid #d4d4d4;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  text-align: left;
+  overflow: auto;
+  white-space: pre;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
