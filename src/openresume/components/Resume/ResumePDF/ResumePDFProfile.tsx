@@ -21,11 +21,8 @@ export const ResumePDFProfile = ({
   themeColor: string;
   isPDF: boolean;
 }) => {
-  const { name, label, email, phone, url, summary, location, profiles } = basics;
-  const locationText = joinNonEmpty(
-    [location.address, location.city, location.region, location.postalCode, location.countryCode],
-    ", "
-  );
+  const { name, label, email, phone, url, location, profiles } = basics;
+  const locationText = joinNonEmpty([location.city, location.countryCode], ", ");
 
   const contactRows: Array<{
     key: string;
@@ -103,7 +100,6 @@ export const ResumePDFProfile = ({
         {name}
       </ResumePDFText>
       {label && <ResumePDFText>{label}</ResumePDFText>}
-      {summary && <ResumePDFText>{summary}</ResumePDFText>}
       {contactRows.length > 0 && (
         <View
           style={{

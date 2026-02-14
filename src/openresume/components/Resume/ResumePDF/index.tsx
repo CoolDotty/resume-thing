@@ -16,7 +16,7 @@ import { ResumePDFLanguages } from "components/Resume/ResumePDF/ResumePDFLanguag
 import { ResumePDFPublications } from "components/Resume/ResumePDF/ResumePDFPublications";
 import { ResumePDFReferences } from "components/Resume/ResumePDF/ResumePDFReferences";
 import { ResumePDFVolunteer } from "components/Resume/ResumePDF/ResumePDFVolunteer";
-import { ResumePDFText } from "components/Resume/ResumePDF/common";
+import { ResumePDFSummary } from "components/Resume/ResumePDF/ResumePDFSummary";
 
 export const ResumePDF = ({
   resume,
@@ -53,9 +53,9 @@ export const ResumePDF = ({
   } = settings;
 
   const name = basics.name || "Resume";
+  const summary = basics.summary.trim();
   const themeColor = settings.themeColor || DEFAULT_FONT_COLOR;
   const showFormsOrder = formsOrder.filter((form) => formToShow[form]);
-  const hasHeaderLabel = Boolean(basics.label);
 
   const formTypeToComponent: { [type in ShowForm]: () => JSX.Element | null } = {
     work: () =>
@@ -199,27 +199,25 @@ export const ResumePDF = ({
                 borderBottomColor: "#e5e7eb"
               }}
             >
-              <ResumePDFText bold={true} style={{ fontSize: "12pt" }}>
-                {name}
-              </ResumePDFText>
-              {hasHeaderLabel && (
-                <ResumePDFText style={{ fontSize: "9pt", color: "#4b5563" }}>
-                  {basics.label}
-                </ResumePDFText>
-              )}
+              <ResumePDFProfile
+                basics={basics}
+                themeColor={themeColor}
+                isPDF={isPDF}
+              />
             </View>
           </View>
           <View
             style={{
               ...styles.flexCol,
-              padding: `${spacing[12]} ${spacing[20]} ${spacing[0]} ${spacing[20]}`
+              padding: `${spacing[52]} ${spacing[20]} ${spacing[0]} ${spacing[20]}`
             }}
           >
-            <ResumePDFProfile
-              basics={basics}
-              themeColor={themeColor}
-              isPDF={isPDF}
-            />
+            {summary && (
+              <ResumePDFSummary
+                summary={summary}
+                themeColor={themeColor}
+              />
+            )}
             {showFormsOrder.map((form) => {
               const Component = formTypeToComponent[form];
               return <Component key={form} />;
