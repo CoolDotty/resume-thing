@@ -169,7 +169,8 @@ export const ResumePDF = ({
             color: DEFAULT_FONT_COLOR,
             fontFamily,
             fontSize: fontSize + "pt",
-            paddingTop: compactHeaderHeight
+            paddingTop: compactHeaderHeight,
+            paddingBottom: spacing[6]
           }}
         >
           <View style={{ ...styles.flexCol, marginTop: `-${compactHeaderHeight}` }}>
