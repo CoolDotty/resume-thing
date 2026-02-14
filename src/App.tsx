@@ -5,7 +5,6 @@ import {
   useRegisterReactPDFFont,
   useRegisterReactPDFHyphenationCallback
 } from "components/fonts/hooks";
-import { initialResumeState } from "lib/redux/resumeDefaults";
 import { initialSettings } from "lib/redux/settingsSlice";
 import type {
   JsonResumeAward,
@@ -30,7 +29,290 @@ import type {
 } from "lib/redux/types";
 import "./App.css";
 
-const seedJson = JSON.stringify(initialResumeState, null, 2);
+const seedJson = `{  "basics": {
+    "name": "Alex Thompson",
+    "label": "Senior Full-Stack Developer",
+    "email": "alex.thompson@example.com",
+    "phone": "(555) 555-5555",
+    "url": "https://at.example.com",
+    "summary": "Senior full-stack developer with 7+ years of experience building scalable web applications and self-hosted infrastructure. Passionate about open-source software, privacy-focused technologies, and backend architecture. Proven track record of leading technical initiatives and mentoring junior developers.",
+    "location": {
+      "city": "Vancouver",
+      "countryCode": "CA"
+    }
+  },
+  "work": [
+    {
+      "name": "TechCorp Solutions",
+      "position": "Senior Full-Stack Developer",
+      "url": "https://techcorpsolutions.com",
+      "startDate": "2022-03",
+      "endDate": "",
+      "summary": "Leading development of enterprise SaaS platform serving 50K+ users",
+      "highlights": [
+        "Architected and deployed self-hosted backend infrastructure using Docker and PostgreSQL, reducing cloud costs by 40%",
+        "Migrated frontend application from JavaScript to TypeScript, improving type safety and developer productivity",
+        "Implemented CI/CD pipelines with GitHub Actions, reducing deployment time from hours to minutes",
+        "Mentored 3 junior developers and conducted code reviews for team of 8 engineers"
+      ]
+    },
+    {
+      "name": "DataFlow Systems",
+      "position": "Full-Stack Developer",
+      "url": "https://dataflowsystems.io",
+      "startDate": "2019-06",
+      "endDate": "2022-02",
+      "summary": "Built real-time data synchronization platform for enterprise clients",
+      "highlights": [
+        "Developed RESTful and GraphQL APIs handling 1M+ requests daily using Node.js and Express",
+        "Created responsive web interfaces with React, Redux, and modern CSS frameworks",
+        "Optimized database queries reducing average response time by 60%",
+        "Implemented comprehensive test coverage increasing stability from 92% to 99.5% uptime"
+      ]
+    },
+    {
+      "name": "WebStart Agency",
+      "position": "Junior Full-Stack Developer",
+      "url": "https://webstartagency.com",
+      "startDate": "2018-01",
+      "endDate": "2019-05",
+      "summary": "Developed custom web applications for small to medium-sized businesses",
+      "highlights": [
+        "Built 15+ client websites using modern JavaScript frameworks and CMS platforms",
+        "Collaborated with designers and project managers to deliver projects on time and within budget",
+        "Maintained and updated legacy codebases with bug fixes and feature enhancements"
+      ]
+    }
+  ],
+  "volunteer": [
+    {
+      "organization": "Open Source Collective",
+      "position": "Contributor",
+      "url": "https://opensource.org",
+      "startDate": "2020-01",
+      "endDate": "",
+      "summary": "Active contributor to various open-source projects focused on privacy and self-hosting",
+      "highlights": [
+        "Contributed 200+ commits to self-hosting tools and backend frameworks",
+        "Maintained documentation and onboarding guides for new contributors",
+        "Provided code reviews and technical guidance to community members"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "British Columbia Institute of Technology",
+      "url": "https://bcit.ca",
+      "area": "Computer Systems Technology",
+      "studyType": "Diploma",
+      "startDate": "2015-09",
+      "endDate": "2017-12",
+      "score": "3.8",
+      "courses": [
+        "Data Structures and Algorithms",
+        "Database Systems",
+        "Web Development",
+        "Software Engineering Principles"
+      ]
+    }
+  ],
+  "awards": [
+    {
+      "title": "Employee of the Quarter",
+      "date": "2023-09",
+      "awarder": "TechCorp Solutions",
+      "summary": "Recognized for leading successful migration of legacy systems to modern architecture"
+    }
+  ],
+  "certificates": [
+    {
+      "name": "AWS Certified Solutions Architect - Associate",
+      "date": "2023-05",
+      "issuer": "Amazon Web Services",
+      "url": "https://aws.amazon.com/certification/"
+    },
+    {
+      "name": "Docker Certified Associate",
+      "date": "2022-08",
+      "issuer": "Docker Inc.",
+      "url": "https://training.mirantis.com/certification/dca-certification-exam/"
+    }
+  ],
+  "publications": [
+    {
+      "name": "Self-Hosting Best Practices for Small Teams",
+      "publisher": "Dev.to",
+      "releaseDate": "2024-11",
+      "url": "https://dev.to/alexthompson/self-hosting-guide",
+      "summary": "Comprehensive guide on setting up self-hosted infrastructure with Docker and privacy-focused tools"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Backend Development",
+      "level": "Expert",
+      "keywords": [
+        "Node.js",
+        "Express",
+        "GraphQL",
+        "REST APIs",
+        "PostgreSQL",
+        "MongoDB",
+        "Redis"
+      ]
+    },
+    {
+      "name": "Frontend Development",
+      "level": "Advanced",
+      "keywords": [
+        "React",
+        "Next.js",
+        "TypeScript",
+        "JavaScript",
+        "HTML5",
+        "CSS3",
+        "Tailwind CSS"
+      ]
+    },
+    {
+      "name": "DevOps & Infrastructure",
+      "level": "Advanced",
+      "keywords": [
+        "Docker",
+        "Podman",
+        "GitHub Actions",
+        "CI/CD",
+        "Linux",
+        "Alpine",
+        "Nginx",
+        "Self-hosting"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "Native speaker"
+    },
+    {
+      "language": "French",
+      "fluency": "Professional working proficiency"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Open Source",
+      "keywords": [
+        "Self-hosting",
+        "Privacy tools",
+        "Backend frameworks",
+        "DevOps automation"
+      ]
+    },
+    {
+      "name": "Game Development",
+      "keywords": [
+        "Godot Engine",
+        "Indie games",
+        "Game design"
+      ]
+    },
+    {
+      "name": "Outdoor Activities",
+      "keywords": [
+        "Hiking",
+        "Running",
+        "Travel"
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "Sarah Mitchell",
+      "reference": "Alex is an exceptional developer who consistently delivers high-quality work. Their expertise in backend architecture and mentorship skills make them an invaluable team member."
+    },
+    {
+      "name": "James Chen",
+      "reference": "Working with Alex was a pleasure. They brought fresh ideas to our infrastructure and significantly improved our deployment processes. Highly recommend."
+    }
+  ],
+  "projects": [
+    {
+      "name": "DevPortfolio",
+      "description": "Modern portfolio template built with Next.js and TypeScript",
+      "highlights": [
+        "Built with Next.js 14, TypeScript, and Tailwind CSS",
+        "Deployed on self-hosted infrastructure with Docker",
+        "Optimized for performance and SEO"
+      ],
+      "keywords": [
+        "Next.js",
+        "TypeScript",
+        "React",
+        "Tailwind CSS"
+      ],
+      "startDate": "2024-01",
+      "endDate": "2024-03",
+      "url": "https://github.com/alexthompson/devportfolio",
+      "roles": [
+        "Creator",
+        "Maintainer"
+      ],
+      "entity": "Personal Project",
+      "type": "application"
+    },
+    {
+      "name": "SelfHost Manager",
+      "description": "CLI tool for managing self-hosted services with Docker Compose",
+      "highlights": [
+        "Simplifies deployment of common self-hosted applications",
+        "Built with Node.js and includes automated backup functionality",
+        "Used by 500+ self-hosters in the community"
+      ],
+      "keywords": [
+        "Node.js",
+        "Docker",
+        "CLI",
+        "Self-hosting"
+      ],
+      "startDate": "2023-06",
+      "endDate": "",
+      "url": "https://github.com/alexthompson/selfhost-manager",
+      "roles": [
+        "Lead Developer"
+      ],
+      "entity": "Open Source",
+      "type": "tool"
+    }
+  ],
+  "meta": {
+    "canonical": "https://raw.githubusercontent.com/alexthompson/resume/main/resume.json",
+    "version": "v1.0.0",
+    "lastModified": "2026-02-13T22:46:00.000Z"
+  },
+  "x-coverLetter": {
+    "companyName": "Innovative Tech Inc",
+    "companyAddress": [
+      "789 Technology Drive",
+      "Floor 12",
+      "Vancouver, BC V6B 4N8"
+    ],
+    "body": [
+      "I am excited to apply for the Senior Full-Stack Developer position at Innovative Tech Inc. With over 7 years of experience building scalable web applications and a passion for self-hosted infrastructure, I am confident I can contribute significantly to your team.",
+      [
+        "Architected self-hosted backend systems reducing operational costs by 40%",
+        "Led TypeScript migration improving code quality and developer productivity",
+        "Implemented comprehensive CI/CD pipelines with GitHub Actions",
+        "Mentored junior developers and fostered collaborative team culture"
+      ],
+      "I am particularly drawn to your company's commitment to open-source technologies and privacy-focused solutions. I would welcome the opportunity to discuss how my experience with modern web technologies and infrastructure can help drive your projects forward.",
+      "Thank you for your time and consideration. I look forward to speaking with you."
+    ],
+    "signoff": "Sincerely,",
+    "signatureName": "Alex Thompson",
+    "signatureImage": "./alexthompsonsignature.png"
+  }
+}`
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
