@@ -33,7 +33,8 @@ export const ResumePDFWorkExperience = ({
       style={{ gap: spacing[0] }}
     >
       {work.map((entry, idx) => {
-        const date = formatDateRange(entry.startDate, entry.endDate)
+        const endDate = entry.endDate.trim() ? entry.endDate : "Present"
+        const date = formatDateRange(entry.startDate, endDate)
         const atoms = buildEntryAtoms({
           entryIndex: idx,
           highlights: entry.highlights
