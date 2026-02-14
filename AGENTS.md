@@ -4,7 +4,7 @@ Coding agent instructions for this repository.
 
 ## Project Overview
 
-Minimal Vite + React + TypeScript app that converts OpenResume JSON state into downloadable PDFs using `@react-pdf/renderer`. React is pinned to `18.2.0` for PDF library compatibility.
+Minimal Vite + React + TypeScript app that converts JSON Resume data into downloadable PDFs using `@react-pdf/renderer`. React is pinned to `18.2.0` for PDF library compatibility. The app parses JSON Resume v1.0.0 schema and renders a professional PDF resume.
 
 ## Build/Lint/Test Commands
 
@@ -34,6 +34,7 @@ npm run preview      # Preview production build locally
 - Use `type` keyword for type-only imports: `import type { Foo } from "bar"`
 - Prefer `interface` for object shapes; use `type` for unions, utilities, or when extending is not needed
 - Explicit return types optional but encouraged for exported functions
+- Use `as unknown` for type assertions when parsing external JSON
 
 ### Imports
 
@@ -41,9 +42,11 @@ npm run preview      # Preview production build locally
 import { useMemo, useState } from "react"
 import { pdf } from "@react-pdf/renderer"
 import { ResumePDF } from "components/Resume/ResumePDF"
-import { initialAppState } from "lib/redux/resumeDefaults"
-import type { Resume, Settings } from "lib/redux/types"
+import { initialResumeState } from "lib/redux/resumeDefaults"
+import type { Resume, JsonResumeWork } from "lib/redux/types"
 ```
+
+Order:
 
 1. React/external packages first
 2. Internal imports using path aliases (`components/*`, `lib/*`)
@@ -77,6 +80,7 @@ Always use these aliases instead of relative paths when importing across directo
 - Default exports for main component files: `export default App`
 - Named exports for reusable components: `export const ResumePDFText = ...`
 - Hooks at component top; custom hooks prefixed with `use`
+- Destructure props in function signature with defaults
 
 ### Error Handling
 
@@ -85,10 +89,10 @@ Always use these aliases instead of relative paths when importing across directo
 - Use defensive programming with type guards and fallback values
 
 ```typescript
-const parseAppState = (raw: string): { value: NormalizedAppState | null; error: string | null } => {
+const parseResume = (raw: string): { value: Resume | null; error: string | null } => {
   try {
     const parsed = JSON.parse(raw) as unknown
-    return { value: normalizeAppState(parsed), error: null }
+    return { value: normalizeResume(parsed), error: null }
   } catch {
     return { value: null, error: "Invalid JSON. Fix syntax before downloading." }
   }
@@ -107,10 +111,12 @@ src/
     │   ├── fonts/           # Font registration hooks and constants
     │   └── Resume/
     │       └── ResumePDF/   # PDF rendering components
+    │           ├── common/  # Shared PDF components (Text, Section, Link)
+    │           └── styles.ts # PDF StyleSheet definitions
     └── lib/
-        ├── constants.ts     # Shared constants
+        ├── constants.ts     # Shared constants (paper sizes, debug flag)
         └── redux/
-            ├── types.ts     # TypeScript interfaces
+            ├── types.ts     # TypeScript interfaces for JSON Resume schema
             ├── settingsSlice.ts
             └── resumeDefaults.ts
 ```
@@ -124,6 +130,21 @@ src/
 - **Prettier 3** - Code formatting
 - **TypeScript 5.9** - Type checking
 
+## PDF Component Patterns
+
+### Styling
+
+- Use `StyleSheet.create()` from `@react-pdf/renderer` for PDF styles
+- Spacing values are in points (pt), not pixels
+- Use the `spacing` object from `styles.ts` for consistent spacing (Tailwind-inspired scale)
+- Spread existing styles when adding overrides: `{ ...styles.flexRow, marginTop: spacing["2"] }`
+
+### Component Structure
+
+- PDF components receive `isPDF` boolean to handle PDF vs HTML rendering
+- Use `ResumePDFText`, `ResumePDFSection`, `ResumePDFLink` from `common/` for consistent rendering
+- Set `debug={DEBUG_RESUME_PDF_FLAG}` on PDF elements for layout debugging
+
 ## Before Committing
 
 1. Run `npm run lint` and fix all errors
@@ -133,5 +154,6 @@ src/
 ## Notes
 
 - Font files must exist in `public/fonts/` for PDF rendering (e.g., `Roboto-Regular.ttf`, `Roboto-Bold.ttf`)
-- The app normalizes input JSON leniently—missing fields receive default values
-- Use `DEBUG_RESUME_PDF_FLAG` in `lib/constants.ts` for debugging PDF layouts
+- The app normalizes input JSON leniently—missing fields receive default values via normalizer functions
+- Use `DEBUG_RESUME_PDF_FLAG` in `lib/constants.ts` for debugging PDF layouts (set to `true`)
+- JSON Resume schema types are prefixed with `JsonResume` (e.g., `JsonResumeWork`, `JsonResumeBasics`)

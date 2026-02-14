@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { ResumePDF } from "components/Resume/ResumePDF";
 import {
@@ -259,11 +259,78 @@ const parseResume = (raw: string): { value: Resume | null; error: string | null 
 function App() {
   const [rawJson, setRawJson] = useState(seedJson);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isPreviewGenerating, setIsPreviewGenerating] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const previewUrlRef = useRef<string | null>(null);
 
   const parsed = useMemo(() => parseResume(rawJson), [rawJson]);
 
   useRegisterReactPDFFont();
   useRegisterReactPDFHyphenationCallback(initialSettings.fontFamily);
+
+  const createPdfDocument = (resume: Resume) => (
+    <ResumePDF
+      resume={resume}
+      settings={initialSettings}
+      isPDF={true}
+    />
+  );
+
+  const setNextPreviewUrl = (nextUrl: string | null) => {
+    setPreviewUrl((previousUrl) => {
+      if (previousUrl) {
+        URL.revokeObjectURL(previousUrl);
+      }
+      previewUrlRef.current = nextUrl;
+      return nextUrl;
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!parsed.value) {
+      setIsPreviewGenerating(false);
+      setPreviewError(parsed.error);
+      setNextPreviewUrl(null);
+      return;
+    }
+
+    const resume = parsed.value;
+    let isCancelled = false;
+    const timeoutId = window.setTimeout(async () => {
+      setIsPreviewGenerating(true);
+      setPreviewError(null);
+      try {
+        const blob = await pdf(createPdfDocument(resume)).toBlob();
+        if (isCancelled) {
+          return;
+        }
+        setNextPreviewUrl(URL.createObjectURL(blob));
+      } catch {
+        if (!isCancelled) {
+          setPreviewError("Unable to generate preview.");
+          setNextPreviewUrl(null);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsPreviewGenerating(false);
+        }
+      }
+    }, 300);
+
+    return () => {
+      isCancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [parsed.value, parsed.error]);
 
   const onDownload = async () => {
     if (!parsed.value || isGenerating) {
@@ -272,14 +339,7 @@ function App() {
 
     setIsGenerating(true);
     try {
-      const pdfDocument = (
-        <ResumePDF
-          resume={parsed.value}
-          settings={initialSettings}
-          isPDF={true}
-        />
-      );
-      const blob = await pdf(pdfDocument).toBlob();
+      const blob = await pdf(createPdfDocument(parsed.value)).toBlob();
       const name = parsed.value.basics.name.trim() || "resume";
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
@@ -298,12 +358,36 @@ function App() {
       <p className="helper-text">
         Paste a JSON Resume object using top-level keys like <code>basics</code>, <code>work</code>, and <code>education</code>.
       </p>
-      <textarea
-        className="json-input"
-        value={rawJson}
-        onChange={(event) => setRawJson(event.target.value)}
-        spellCheck={false}
-      />
+      <section className="editor-preview-grid">
+        <div className="panel">
+          <h2>Resume JSON</h2>
+          <textarea
+            className="json-input"
+            value={rawJson}
+            onChange={(event) => setRawJson(event.target.value)}
+            spellCheck={false}
+          />
+        </div>
+        <div className="panel">
+          <h2>PDF Preview</h2>
+          <div className="preview-shell">
+            {previewUrl ? (
+              <iframe
+                className="preview-frame"
+                src={previewUrl}
+                title="Resume PDF preview"
+              />
+            ) : (
+              <p className="preview-placeholder">
+                {previewError ?? "Preview unavailable."}
+              </p>
+            )}
+          </div>
+          <p className="status">
+            {isPreviewGenerating ? "Updating preview..." : "Preview is synced with valid JSON input."}
+          </p>
+        </div>
+      </section>
       <p className={parsed.error ? "status error" : "status ok"}>
         {parsed.error ?? "JSON is valid. Ready to download."}
       </p>
