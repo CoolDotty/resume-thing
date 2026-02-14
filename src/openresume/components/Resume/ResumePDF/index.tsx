@@ -1,4 +1,4 @@
-import { Page, View, Document } from "@react-pdf/renderer"
+import { Page, View, Document, Text } from "@react-pdf/renderer"
 import { styles, spacing } from "components/Resume/ResumePDF/styles"
 import { ResumePDFProfile } from "components/Resume/ResumePDF/ResumePDFProfile"
 import { ResumePDFWorkExperience } from "components/Resume/ResumePDF/ResumePDFWorkExperience"
@@ -244,6 +244,17 @@ export const ResumePDF = ({
               return <Component key={form} />
             })}
           </View>
+          <Text
+            fixed={true}
+            style={{
+              color: DEFAULT_FONT_COLOR,
+              fontSize: "9pt",
+              position: "absolute",
+              bottom: spacing[2],
+              right: spacing[16]
+            }}
+            render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
+          />
         </Page>
       </Document>
       <SuppressResumePDFErrorMessage />
