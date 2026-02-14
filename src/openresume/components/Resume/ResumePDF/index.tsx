@@ -76,7 +76,7 @@ export const ResumePDF = ({
   const summary = basics.summary.trim()
   const themeColor = settings.themeColor || DEFAULT_FONT_COLOR
   const showFormsOrder = formsOrder.filter((form) => formToShow[form])
-  const compactHeaderHeight = spacing[16]
+  const compactHeaderHeight = spacing[20]
   const shouldRenderResume = mode !== "cover-letter"
   const shouldRenderCoverLetter = Boolean(coverLetter) && mode !== "resume"
 
