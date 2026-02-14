@@ -1,66 +1,64 @@
 #root {
-  width: 100%;
+  min-height: 100vh;
 }
 
-.app {
-  min-height: 100dvh;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 1.25rem;
-  padding: 2rem;
-  max-width: 900px;
+.app-shell {
+  box-sizing: border-box;
+  max-width: 980px;
   margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.controls {
-  display: grid;
-  gap: 0.75rem;
-  justify-items: center;
-  text-align: center;
-}
-
-h1 {
+.app-shell h1 {
   margin: 0;
-  font-size: clamp(1.75rem, 2vw + 1rem, 2.5rem);
+  font-size: 28px;
+}
+
+.helper-text {
+  margin: 0;
+  color: #4b5563;
+}
+
+.json-input {
+  width: 100%;
+  min-height: 64vh;
+  resize: vertical;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.status {
+  margin: 0;
+  font-size: 14px;
+}
+
+.status.ok {
+  color: #166534;
+}
+
+.status.error {
+  color: #b91c1c;
 }
 
 button {
-  border: 1px solid #2b2b2b;
-  border-radius: 0.5rem;
-  padding: 0.7rem 1.1rem;
-  font: inherit;
-  background: #ffffff;
-  color: #111111;
+  align-self: flex-start;
+  border: 1px solid #111827;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 10px 14px;
   cursor: pointer;
 }
 
-button:hover {
-  background: #f3f3f3;
-}
-
-button:focus-visible {
-  outline: 2px solid #1a73e8;
-  outline-offset: 2px;
-}
-
-.preview {
-  width: 100%;
-  min-height: 60dvh;
-  border: 1px solid #d4d4d4;
-  border-radius: 0.75rem;
-  background: #ffffff;
-}
-
-.literal {
-  margin: 0;
-  padding: 1rem;
-  border: 1px solid #d4d4d4;
-  border-radius: 0.75rem;
-  background: #ffffff;
-  text-align: left;
-  overflow: auto;
-  white-space: pre;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.85rem;
-  line-height: 1.4;
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

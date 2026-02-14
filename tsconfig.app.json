@@ -15,6 +15,11 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "components/*": ["src/openresume/components/*"],
+      "lib/*": ["src/openresume/lib/*"]
+    },
 
     /* Linting */
     "strict": true,
