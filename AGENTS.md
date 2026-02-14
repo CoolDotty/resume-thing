@@ -35,6 +35,7 @@ npm run preview      # Preview production build locally
 - Prefer `interface` for object shapes; use `type` for unions, utilities, or when extending is not needed
 - Explicit return types optional but encouraged for exported functions
 - Use `as unknown` for type assertions when parsing external JSON
+- Use type guards for runtime type checking (e.g., `isRecord`, `asString` helpers)
 
 ### Imports
 
@@ -99,6 +100,22 @@ const parseResume = (raw: string): { value: Resume | null; error: string | null 
 }
 ```
 
+### Type Guards and Normalizers
+
+When parsing untrusted JSON, use helper functions with type guards:
+
+```typescript
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+}
+
+const asString = (value: unknown, fallback = ""): string => {
+  return typeof value === "string" ? value : fallback
+}
+```
+
+Normalize each field with fallback values rather than throwing errors.
+
 ### File Organization
 
 ```
@@ -157,3 +174,4 @@ src/
 - The app normalizes input JSON leniently—missing fields receive default values via normalizer functions
 - Use `DEBUG_RESUME_PDF_FLAG` in `lib/constants.ts` for debugging PDF layouts (set to `true`)
 - JSON Resume schema types are prefixed with `JsonResume` (e.g., `JsonResumeWork`, `JsonResumeBasics`)
+- The `x-coverLetter` field is a custom extension for cover letter support
