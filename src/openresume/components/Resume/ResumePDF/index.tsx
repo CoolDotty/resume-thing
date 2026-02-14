@@ -1,31 +1,32 @@
-import { Page, View, Document } from "@react-pdf/renderer";
-import { styles, spacing } from "components/Resume/ResumePDF/styles";
-import { ResumePDFProfile } from "components/Resume/ResumePDF/ResumePDFProfile";
-import { ResumePDFWorkExperience } from "components/Resume/ResumePDF/ResumePDFWorkExperience";
-import { ResumePDFEducation } from "components/Resume/ResumePDF/ResumePDFEducation";
-import { ResumePDFProject } from "components/Resume/ResumePDF/ResumePDFProject";
-import { ResumePDFSkills } from "components/Resume/ResumePDF/ResumePDFSkills";
-import { DEFAULT_FONT_COLOR } from "lib/redux/settingsSlice";
-import type { Settings, ShowForm } from "lib/redux/settingsSlice";
-import type { Resume } from "lib/redux/types";
-import { SuppressResumePDFErrorMessage } from "components/Resume/ResumePDF/common/SuppressResumePDFErrorMessage";
-import { ResumePDFAwards } from "components/Resume/ResumePDF/ResumePDFAwards";
-import { ResumePDFCertificates } from "components/Resume/ResumePDF/ResumePDFCertificates";
-import { ResumePDFInterests } from "components/Resume/ResumePDF/ResumePDFInterests";
-import { ResumePDFLanguages } from "components/Resume/ResumePDF/ResumePDFLanguages";
-import { ResumePDFPublications } from "components/Resume/ResumePDF/ResumePDFPublications";
-import { ResumePDFReferences } from "components/Resume/ResumePDF/ResumePDFReferences";
-import { ResumePDFVolunteer } from "components/Resume/ResumePDF/ResumePDFVolunteer";
-import { ResumePDFSummary } from "components/Resume/ResumePDF/ResumePDFSummary";
+import { Page, View, Document } from "@react-pdf/renderer"
+import { styles, spacing } from "components/Resume/ResumePDF/styles"
+import { ResumePDFProfile } from "components/Resume/ResumePDF/ResumePDFProfile"
+import { ResumePDFWorkExperience } from "components/Resume/ResumePDF/ResumePDFWorkExperience"
+import { ResumePDFEducation } from "components/Resume/ResumePDF/ResumePDFEducation"
+import { ResumePDFProject } from "components/Resume/ResumePDF/ResumePDFProject"
+import { ResumePDFSkills } from "components/Resume/ResumePDF/ResumePDFSkills"
+import { DEFAULT_FONT_COLOR } from "lib/redux/settingsSlice"
+import type { Settings, ShowForm } from "lib/redux/settingsSlice"
+import type { Resume } from "lib/redux/types"
+import { SuppressResumePDFErrorMessage } from "components/Resume/ResumePDF/common/SuppressResumePDFErrorMessage"
+import { ResumePDFAwards } from "components/Resume/ResumePDF/ResumePDFAwards"
+import { ResumePDFCertificates } from "components/Resume/ResumePDF/ResumePDFCertificates"
+import { ResumePDFInterests } from "components/Resume/ResumePDF/ResumePDFInterests"
+import { ResumePDFLanguages } from "components/Resume/ResumePDF/ResumePDFLanguages"
+import { ResumePDFPublications } from "components/Resume/ResumePDF/ResumePDFPublications"
+import { ResumePDFReferences } from "components/Resume/ResumePDF/ResumePDFReferences"
+import { ResumePDFVolunteer } from "components/Resume/ResumePDF/ResumePDFVolunteer"
+import { ResumePDFSummary } from "components/Resume/ResumePDF/ResumePDFSummary"
+import { ResumePDFText } from "components/Resume/ResumePDF/common"
 
 export const ResumePDF = ({
   resume,
   settings,
   isPDF = false
 }: {
-  resume: Resume;
-  settings: Settings;
-  isPDF?: boolean;
+  resume: Resume
+  settings: Settings
+  isPDF?: boolean
 }) => {
   const {
     basics,
@@ -40,7 +41,7 @@ export const ResumePDF = ({
     languages,
     interests,
     references
-  } = resume;
+  } = resume
 
   const {
     fontFamily,
@@ -50,13 +51,14 @@ export const ResumePDF = ({
     formToShow,
     formsOrder,
     showBulletPoints
-  } = settings;
+  } = settings
 
-  const name = basics.name || "Resume";
-  const summary = basics.summary.trim();
-  const themeColor = settings.themeColor || DEFAULT_FONT_COLOR;
-  const showFormsOrder = formsOrder.filter((form) => formToShow[form]);
-  const pageTopPadding = "104pt";
+  const name = basics.name || "Resume"
+  const label = basics.label.trim()
+  const summary = basics.summary.trim()
+  const themeColor = settings.themeColor || DEFAULT_FONT_COLOR
+  const showFormsOrder = formsOrder.filter((form) => formToShow[form])
+  const compactHeaderHeight = spacing[24]
 
   const formTypeToComponent: { [type in ShowForm]: () => JSX.Element | null } = {
     work: () =>
@@ -101,11 +103,7 @@ export const ResumePDF = ({
       ) : null,
     awards: () =>
       awards.length > 0 ? (
-        <ResumePDFAwards
-          heading={formToHeading.awards}
-          awards={awards}
-          themeColor={themeColor}
-        />
+        <ResumePDFAwards heading={formToHeading.awards} awards={awards} themeColor={themeColor} />
       ) : null,
     certificates: () =>
       certificates.length > 0 ? (
@@ -159,7 +157,7 @@ export const ResumePDF = ({
           themeColor={themeColor}
         />
       ) : null
-  };
+  }
 
   return (
     <>
@@ -171,19 +169,10 @@ export const ResumePDF = ({
             color: DEFAULT_FONT_COLOR,
             fontFamily,
             fontSize: fontSize + "pt",
-            paddingTop: pageTopPadding
+            paddingTop: compactHeaderHeight
           }}
         >
-          <View
-            fixed={true}
-            style={{
-              ...styles.flexCol,
-              position: "absolute",
-              top: spacing[0],
-              left: spacing[0],
-              right: spacing[0]
-            }}
-          >
+          <View style={{ ...styles.flexCol, marginTop: `-${compactHeaderHeight}` }}>
             {Boolean(settings.themeColor) && (
               <View
                 style={{
@@ -200,33 +189,63 @@ export const ResumePDF = ({
                 paddingBottom: spacing[3]
               }}
             >
-              <ResumePDFProfile
-                basics={basics}
-                themeColor={themeColor}
-                isPDF={isPDF}
-              />
+              <ResumePDFProfile basics={basics} themeColor={themeColor} isPDF={isPDF} />
             </View>
           </View>
+          <View
+            fixed={true}
+            style={{
+              ...styles.flexCol,
+              position: "absolute",
+              top: spacing[0],
+              left: spacing[0],
+              right: spacing[0]
+            }}
+            render={({ pageNumber }) =>
+              pageNumber > 1 ? (
+                <>
+                  {Boolean(settings.themeColor) && (
+                    <View
+                      style={{
+                        width: spacing.full,
+                        height: spacing[3.5],
+                        backgroundColor: themeColor
+                      }}
+                    />
+                  )}
+                  <View
+                    style={{
+                      ...styles.flexCol,
+                      padding: `${spacing[3]} ${spacing[16]}`,
+                      paddingBottom: spacing[3]
+                    }}
+                  >
+                    <ResumePDFText bold={true} themeColor={themeColor} style={{ fontSize: "16pt" }}>
+                      {name}
+                    </ResumePDFText>
+                    {label && (
+                      <ResumePDFText style={{ marginTop: spacing[0.5] }}>{label}</ResumePDFText>
+                    )}
+                  </View>
+                </>
+              ) : null
+            }
+          />
           <View
             style={{
               ...styles.flexCol,
               padding: `${spacing[0]} ${spacing[16]} ${spacing[0]} ${spacing[16]}`
             }}
           >
-            {summary && (
-              <ResumePDFSummary
-                summary={summary}
-                themeColor={themeColor}
-              />
-            )}
+            {summary && <ResumePDFSummary summary={summary} themeColor={themeColor} />}
             {showFormsOrder.map((form) => {
-              const Component = formTypeToComponent[form];
-              return <Component key={form} />;
+              const Component = formTypeToComponent[form]
+              return <Component key={form} />
             })}
           </View>
         </Page>
       </Document>
       <SuppressResumePDFErrorMessage />
     </>
-  );
-};
+  )
+}
