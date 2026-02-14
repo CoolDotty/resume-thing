@@ -177,7 +177,7 @@ export const initialResumeState: Resume = {
 export const initialAppState = {
   resume: initialResumeState,
   settings: {
-    themeColor: "#38bdf8",
+    themeColor: "#f97316",
     fontFamily: "Roboto",
     fontSize: "11",
     documentSize: "Letter",

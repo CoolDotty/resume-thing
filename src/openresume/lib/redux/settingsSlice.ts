@@ -42,7 +42,7 @@ export interface Settings {
 
 export type ShowForm = keyof Settings["formToShow"];
 
-export const DEFAULT_THEME_COLOR = "#38bdf8";
+export const DEFAULT_THEME_COLOR = "#f97316";
 export const DEFAULT_FONT_FAMILY = "Roboto";
 export const DEFAULT_FONT_SIZE = "11";
 export const DEFAULT_FONT_COLOR = "#171717";
