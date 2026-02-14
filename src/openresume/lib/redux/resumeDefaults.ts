@@ -1,4 +1,4 @@
-import type { Settings } from "lib/redux/settingsSlice";
+import type { Settings } from "lib/redux/settingsSlice"
 import type {
   JsonResumeAward,
   JsonResumeBasics,
@@ -17,7 +17,7 @@ import type {
   JsonResumeVolunteer,
   JsonResumeWork,
   Resume
-} from "lib/redux/types";
+} from "lib/redux/types"
 
 export const initialLocation: JsonResumeLocation = {
   address: "",
@@ -25,13 +25,13 @@ export const initialLocation: JsonResumeLocation = {
   city: "",
   countryCode: "",
   region: ""
-};
+}
 
 export const initialProfile: JsonResumeProfile = {
   network: "",
   username: "",
   url: ""
-};
+}
 
 export const initialBasics: JsonResumeBasics = {
   name: "",
@@ -43,7 +43,7 @@ export const initialBasics: JsonResumeBasics = {
   summary: "",
   location: initialLocation,
   profiles: []
-};
+}
 
 export const initialWork: JsonResumeWork = {
   name: "",
@@ -55,7 +55,7 @@ export const initialWork: JsonResumeWork = {
   endDate: "",
   summary: "",
   highlights: []
-};
+}
 
 export const initialVolunteer: JsonResumeVolunteer = {
   organization: "",
@@ -65,7 +65,7 @@ export const initialVolunteer: JsonResumeVolunteer = {
   endDate: "",
   summary: "",
   highlights: []
-};
+}
 
 export const initialEducation: JsonResumeEducation = {
   institution: "",
@@ -76,21 +76,21 @@ export const initialEducation: JsonResumeEducation = {
   endDate: "",
   score: "",
   courses: []
-};
+}
 
 export const initialAward: JsonResumeAward = {
   title: "",
   date: "",
   awarder: "",
   summary: ""
-};
+}
 
 export const initialCertificate: JsonResumeCertificate = {
   name: "",
   date: "",
   issuer: "",
   url: ""
-};
+}
 
 export const initialPublication: JsonResumePublication = {
   name: "",
@@ -98,28 +98,28 @@ export const initialPublication: JsonResumePublication = {
   releaseDate: "",
   url: "",
   summary: ""
-};
+}
 
 export const initialSkill: JsonResumeSkill = {
   name: "",
   level: "",
   keywords: []
-};
+}
 
 export const initialLanguage: JsonResumeLanguage = {
   language: "",
   fluency: ""
-};
+}
 
 export const initialInterest: JsonResumeInterest = {
   name: "",
   keywords: []
-};
+}
 
 export const initialReference: JsonResumeReference = {
   name: "",
   reference: ""
-};
+}
 
 export const initialProject: JsonResumeProject = {
   name: "",
@@ -132,13 +132,13 @@ export const initialProject: JsonResumeProject = {
   roles: [],
   entity: "",
   type: ""
-};
+}
 
 export const initialMeta: JsonResumeMeta = {
   canonical: "",
   version: "v1.0.0",
   lastModified: ""
-};
+}
 
 export const initialCoverLetter: JsonResumeCoverLetter = {
   companyName: "Acme Inc",
@@ -155,7 +155,7 @@ export const initialCoverLetter: JsonResumeCoverLetter = {
   signoff: "Sincerely,",
   signatureName: "Jane Candidate",
   signatureImage: "https://via.placeholder.com/360x120.png?text=Signature"
-};
+}
 
 export const initialResumeState: Resume = {
   basics: initialBasics,
@@ -172,12 +172,12 @@ export const initialResumeState: Resume = {
   projects: [],
   meta: initialMeta,
   "x-coverLetter": initialCoverLetter
-};
+}
 
 export const initialAppState = {
   resume: initialResumeState,
   settings: {
-    themeColor: "#f97316",
+    themeColor: "#19646A",
     fontFamily: "Roboto",
     fontSize: "11",
     documentSize: "Letter",
@@ -229,4 +229,4 @@ export const initialAppState = {
       interests: true
     }
   } satisfies Settings
-};
+}

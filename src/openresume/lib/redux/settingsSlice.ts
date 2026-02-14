@@ -1,51 +1,51 @@
 export interface Settings {
-  themeColor: string;
-  fontFamily: string;
-  fontSize: string;
-  documentSize: string;
+  themeColor: string
+  fontFamily: string
+  fontSize: string
+  documentSize: string
   formToShow: {
-    work: boolean;
-    volunteer: boolean;
-    education: boolean;
-    projects: boolean;
-    awards: boolean;
-    certificates: boolean;
-    publications: boolean;
-    skills: boolean;
-    languages: boolean;
-    interests: boolean;
-    references: boolean;
-  };
+    work: boolean
+    volunteer: boolean
+    education: boolean
+    projects: boolean
+    awards: boolean
+    certificates: boolean
+    publications: boolean
+    skills: boolean
+    languages: boolean
+    interests: boolean
+    references: boolean
+  }
   formToHeading: {
-    work: string;
-    volunteer: string;
-    education: string;
-    projects: string;
-    awards: string;
-    certificates: string;
-    publications: string;
-    skills: string;
-    languages: string;
-    interests: string;
-    references: string;
-  };
-  formsOrder: ShowForm[];
+    work: string
+    volunteer: string
+    education: string
+    projects: string
+    awards: string
+    certificates: string
+    publications: string
+    skills: string
+    languages: string
+    interests: string
+    references: string
+  }
+  formsOrder: ShowForm[]
   showBulletPoints: {
-    work: boolean;
-    volunteer: boolean;
-    education: boolean;
-    projects: boolean;
-    skills: boolean;
-    interests: boolean;
-  };
+    work: boolean
+    volunteer: boolean
+    education: boolean
+    projects: boolean
+    skills: boolean
+    interests: boolean
+  }
 }
 
-export type ShowForm = keyof Settings["formToShow"];
+export type ShowForm = keyof Settings["formToShow"]
 
-export const DEFAULT_THEME_COLOR = "#f97316";
-export const DEFAULT_FONT_FAMILY = "Roboto";
-export const DEFAULT_FONT_SIZE = "11";
-export const DEFAULT_FONT_COLOR = "#171717";
+export const DEFAULT_THEME_COLOR = "#19646A"
+export const DEFAULT_FONT_FAMILY = "Roboto"
+export const DEFAULT_FONT_SIZE = "11"
+export const DEFAULT_FONT_COLOR = "#171717"
 
 export const initialSettings: Settings = {
   themeColor: DEFAULT_THEME_COLOR,
@@ -99,4 +99,4 @@ export const initialSettings: Settings = {
     skills: true,
     interests: true
   }
-};
+}
