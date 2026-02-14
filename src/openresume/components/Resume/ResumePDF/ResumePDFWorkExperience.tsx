@@ -1,13 +1,16 @@
-import { View } from "@react-pdf/renderer";
+import { View } from "@react-pdf/renderer"
 import {
+  ResumePDFAtomBlock,
   ResumePDFBulletList,
   ResumePDFLink,
   ResumePDFSection,
+  ResumePDFSectionHeading,
   ResumePDFText
-} from "components/Resume/ResumePDF/common";
-import { styles, spacing } from "components/Resume/ResumePDF/styles";
-import { formatDateRange } from "lib/redux/resumeFormatting";
-import type { JsonResumeWork } from "lib/redux/types";
+} from "components/Resume/ResumePDF/common"
+import { buildEntryAtoms } from "components/Resume/ResumePDF/common/paginationAtoms"
+import { styles, spacing } from "components/Resume/ResumePDF/styles"
+import { formatDateRange } from "lib/redux/resumeFormatting"
+import type { JsonResumeWork } from "lib/redux/types"
 
 export const ResumePDFWorkExperience = ({
   heading,
@@ -16,20 +19,27 @@ export const ResumePDFWorkExperience = ({
   showBulletPoints,
   isPDF
 }: {
-  heading: string;
-  work: JsonResumeWork[];
-  themeColor: string;
-  showBulletPoints: boolean;
-  isPDF: boolean;
+  heading: string
+  work: JsonResumeWork[]
+  themeColor: string
+  showBulletPoints: boolean
+  isPDF: boolean
 }) => {
   return (
-    <ResumePDFSection themeColor={themeColor} heading={heading}>
+    <ResumePDFSection
+      themeColor={themeColor}
+      heading={heading}
+      showHeading={false}
+      style={{ gap: spacing[0] }}
+    >
       {work.map((entry, idx) => {
-        const date = formatDateRange(entry.startDate, entry.endDate);
-        const hasHighlights = entry.highlights.length > 0;
-
-        return (
-          <View key={idx} style={idx !== 0 ? { marginTop: spacing["2"] } : {}}>
+        const date = formatDateRange(entry.startDate, entry.endDate)
+        const atoms = buildEntryAtoms({
+          entryIndex: idx,
+          highlights: entry.highlights
+        })
+        const entryCore = (
+          <View>
             <View style={styles.flexRowBetween}>
               {entry.url ? (
                 <ResumePDFLink
@@ -52,17 +62,37 @@ export const ResumePDFWorkExperience = ({
                 <ResumePDFText>{entry.summary}</ResumePDFText>
               </View>
             )}
-            {hasHighlights && (
+            {atoms[0].highlights.length > 0 && (
               <View style={{ ...styles.flexCol, marginTop: spacing["1.5"] }}>
                 <ResumePDFBulletList
-                  items={entry.highlights}
+                  items={atoms[0].highlights}
                   showBulletPoints={showBulletPoints}
                 />
               </View>
             )}
           </View>
-        );
+        )
+
+        return atoms.map((atom) => (
+          <ResumePDFAtomBlock
+            key={atom.key}
+            style={atom.type === "entryCore" ? (idx !== 0 ? { marginTop: spacing["2"] } : {}) : {}}
+          >
+            {atom.type === "entryCore" && atom.includeHeading && (
+              <View style={{ ...styles.flexCol, gap: spacing["2"] }}>
+                <ResumePDFSectionHeading themeColor={themeColor} heading={heading} />
+                {entryCore}
+              </View>
+            )}
+            {atom.type === "entryCore" && !atom.includeHeading && entryCore}
+            {atom.type === "highlightSingle" && (
+              <View style={styles.flexCol}>
+                <ResumePDFBulletList items={atom.highlights} showBulletPoints={showBulletPoints} />
+              </View>
+            )}
+          </ResumePDFAtomBlock>
+        ))
       })}
     </ResumePDFSection>
-  );
-};
+  )
+}
